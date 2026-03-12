@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏢 ERP System - PT. APNA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;overflow-x:hidden}
+.sidebar{width:260px;min-height:100vh;background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);position:fixed;left:0;top:0;z-index:100;transition:width .3s;overflow:hidden}
+.sidebar.collapsed{width:64px}
+.main{margin-left:260px;transition:margin-left .3s;min-height:100vh}
+.main.collapsed{margin-left:64px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;border-radius:10px;margin:2px 8px;transition:all .2s;color:#94a3b8;font-size:13.5px}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 15px rgba(59,130,246,.3)}
+.nav-group{font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.1em;padding:14px 16px 4px;font-weight:700}
+.sub-menu{overflow:hidden;max-height:0;transition:max-height .3s ease}
+.sub-menu.open{max-height:500px}
+.sub-item{display:flex;align-items:center;gap:10px;padding:8px 16px 8px 44px;cursor:pointer;color:#64748b;font-size:13px;border-radius:8px;margin:1px 8px;transition:all .15s}
+.sub-item:hover{background:rgba(255,255,255,.06);color:#e2e8f0}
+.sub-item.active{color:#60a5fa;background:rgba(59,130,246,.1)}
+.page{display:none;padding:24px;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 6px rgba(0,0,0,.04);border:1px solid #f1f5f9;transition:all .2s}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);transform:translateY(-1px)}
+.kpi-card{background:#fff;border-radius:16px;padding:20px;border:1px solid #f1f5f9;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:all .2s;overflow:hidden;position:relative}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.1)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 4px 12px rgba(59,130,246,.4)}
+.btn-success{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 2px 8px rgba(34,197,94,.3)}
+.btn-success:hover{background:linear-gradient(135deg,#16a34a,#15803d)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 2px 8px rgba(239,68,68,.3)}
+.btn-danger:hover{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.btn-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.btn-outline{background:#fff;color:#374151;border:1.5px solid #e5e7eb}
+.btn-outline:hover{background:#f9fafb}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;background:#f9fafb;border-bottom:1px solid #f3f4f6}
+tbody tr{border-bottom:1px solid #f9fafb;transition:background .15s}
+tbody tr:hover{background:#fafbfc}
+tbody td{padding:11px 14px;font-size:13px;color:#374151}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-success{background:#dcfce7;color:#15803d}
+.badge-warning{background:#fef3c7;color:#b45309}
+.badge-danger{background:#fee2e2;color:#dc2626}
+.badge-info{background:#dbeafe;color:#1d4ed8}
+.badge-purple{background:#ede9fe;color:#7c3aed}
+.badge-gray{background:#f3f4f6;color:#6b7280}
+.badge-orange{background:#ffedd5;color:#c2410c}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:20px;max-height:92vh;overflow-y:auto;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:6px}
+.form-control{width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;color:#111827;background:#fafafa;transition:all .15s;outline:none}
+.form-control:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.form-select{width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;color:#111827;background:#fafafa;cursor:pointer;outline:none}
+.form-select:focus{border-color:#3b82f6;background:#fff}
+.topbar{background:#fff;border-bottom:1px solid #f1f5f9;padding:12px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.notif{position:fixed;top:20px;right:20px;z-index:9999;transform:translateX(400px);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);min-width:300px;max-width:380px}
+.notif.show{transform:translateX(0)}
+.progress-bar{height:6px;border-radius:3px;background:#e5e7eb;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f9fafb}
+.stat-row:last-child{border-bottom:none}
+input[type=number]::-webkit-inner-spin-button{opacity:.5}
+.search-box{display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:10px;padding:7px 12px;flex:1;max-width:320px}
+.search-box input{border:none;background:transparent;outline:none;font-size:13px;color:#374151;width:100%}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px}
+.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-collapsed-hide{transition:opacity .2s,width .3s}
+.collapsed .sidebar-collapsed-hide{opacity:0;width:0;overflow:hidden;white-space:nowrap}
+.invoice-preview{background:#fff;padding:32px;max-width:700px;margin:0 auto}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#f1f5f9}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px;background:#f8fafc;border-bottom:1px solid #f1f5f9}
+.items-table tbody tr:nth-child(even){background:#fafbff}
+.total-box{background:linear-gradient(135deg,#f0f7ff,#e8f2ff);border:1.5px solid #bfdbfe;border-radius:14px;padding:16px}
+@media(max-width:768px){.sidebar{width:260px;transform:translateX(-100%)}.sidebar.mobile-open{transform:translateX(0)}.main{margin-left:0}}
+.chart-container{position:relative;height:220px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.trend-up{color:#16a34a;font-size:11px;font-weight:600}
+.trend-down{color:#dc2626;font-size:11px;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- NOTIFICATION -->
+<!-- ═══════════════════════════════════════ -->
+<div class="notif" id="notif">
+  <div class="card" style="padding:14px 16px;display:flex;align-items:flex-start;gap:12px">
+    <div id="notifIcon" style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0"></div>
+    <div style="flex:1">
+      <div id="notifTitle" style="font-weight:700;font-size:13px;color:#111827"></div>
+      <div id="notifMsg" style="font-size:12px;color:#6b7280;margin-top:2px"></div>
+    </div>
+    <button onclick="hideNotif()" style="color:#9ca3af;font-size:18px;cursor:pointer;background:none;border:none;line-height:1">×</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LOGIN PAGE -->
+<!-- ═══════════════════════════════════════ -->
+<div id="loginPage" style="min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0f172a 100%);display:flex;align-items:center;justify-content:center;padding:16px">
+  <div style="width:100%;max-width:420px">
+    <div class="card" style="padding:36px 32px">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(59,130,246,.4)">
+          <span style="color:#fff;font-size:22px;font-weight:900">ERP</span>
+        </div>
+        <h1 style="font-size:22px;font-weight:800;color:#111827">Sistem ERP Perusahaan</h1>
+        <p style="color:#9ca3af;font-size:13px;margin-top:4px">PT. Maju Jaya Abadi</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="loginUser" type="text" class="form-control" value="admin" placeholder="Masukkan username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div style="position:relative">
+          <input id="loginPass" type="password" class="form-control" value="admin123" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')doLogin()">
+          <button onclick="togglePass()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9ca3af;font-size:16px">👁</button>
+        </div>
+      </div>
+      <button onclick="doLogin()" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:4px">
+        🚀 Masuk ke Sistem
+      </button>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px 14px;margin-top:16px;text-align:center">
+        <p style="font-size:12px;color:#0369a1">Demo Login: <strong>admin</strong> / <strong>admin123</strong></p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px;color:#475569;font-size:12px">
+      ERP System v2.0 © 2024 PT. Maju Jaya Abadi
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- MAIN APP -->
+<!-- ═══════════════════════════════════════ -->
+<div id="app" style="display:none">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div style="width:38px;height:38px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:13px;flex-shrink:0">ERP</div>
+    <div class="sidebar-collapsed-hide">
+      <div style="font-weight:700;color:#f1f5f9;font-size:14px">Maju Jaya</div>
+      <div style="font-size:11px;color:#64748b">Administrator</div>
+    </div>
+    <button onclick="toggleSidebar()" style="margin-left:auto;background:none;border:none;color:#64748b;cursor:pointer;font-size:18px;padding:2px" class="sidebar-collapsed-hide">☰</button>
+  </div>
+
+  <div style="padding:12px 8px;overflow-y:auto;height:calc(100vh - 72px)">
+    <div class="nav-group sidebar-collapsed-hide">Utama</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)" title="Dashboard">
+      <span style="font-size:18px;flex-shrink:0">📊</span>
+      <span class="sidebar-collapsed-hide">Dashboard</span>
+    </div>
+
+    <div class="nav-group sidebar-collapsed-hide" style="margin-top:8px">Penjualan</div>
+    <div class="nav-item" onclick="toggleMenu('menuSales',this)" title="Penjualan">
+      <span style="font-size:18px;flex-shrink:0">💼</span>
+      <span class="sidebar-collapsed-hide" style="flex:1">Penjualan</span>
+      <span class="sidebar-collapsed-hide" id="arrowSales" style="font-size:10px;transition:.2s">▶</span>
+    </div>
+    <div class="sub-menu" id="menuSales">
+      <div class="sub-item" onclick="showPage('quotation',this)" title="Quotation">📝 <span class="sidebar-collapsed-hide">Quotation</span></div>
+      <div class="sub-item" onclick="showPage('salesorder',this)" title="Sales Order">🛍️ <span class="sidebar-collapsed-hide">Sales Order</span></div>
+      <div class="sub-item" onclick="showPage('deliveryorder',this)" title="Delivery Order">🚚 <span class="sidebar-collapsed-hide">Delivery Order</span></div>
+      <div class="sub-item" onclick="showPage('invoicesales',this)" title="Invoice Penjualan">🧾 <span class="sidebar-collapsed-hide">Invoice Penjualan</span></div>
+    </div>
+
+    <div class="nav-item" onclick="toggleMenu('menuBeli',this)" title="Pembelian">
+      <span style="font-size:18px;flex-shrink:0">🛒</span>
+      <span class="sidebar-collapsed-hide" style="flex:1">Pembelian</span>
+      <span class="sidebar-collapsed-hide" id="arrowBeli" style="font-size:10px;transition:.2s">▶</span>
+    </div>
+    <div class="sub-menu" id="menuBeli">
+      <div class="sub-item" onclick="showPage('purchaseorder',this)" title="Purchase Order">📋 <span class="sidebar-collapsed-hide">Purchase Order</span></div>
+      <div class="sub-item" onclick="showPage('goodsreceipt',this)" title="Penerimaan Barang">📦 <span class="sidebar-collapsed-hide">Penerimaan Barang</span></div>
+      <div class="sub-item" onclick="showPage('invoicepurchase',this)" title="Invoice Pembelian">📄 <span class="sidebar-collapsed-hide">Invoice Pembelian</span></div>
+    </div>
+
+    <div class="nav-group sidebar-collapsed-hide" style="margin-top:8px">Inventori</div>
+    <div class="nav-item" onclick="toggleMenu('menuInv',this)" title="Inventori">
+      <span style="font-size:18px;flex-shrink:0">📦</span>
+      <span class="sidebar-collapsed-hide" style="flex:1">Inventori</span>
+      <span class="sidebar-collapsed-hide" id="arrowInv" style="font-size:10px;transition:.2s">▶</span>
+    </div>
+    <div class="sub-menu" id="menuInv">
+      <div class="sub-item" onclick="showPage('products',this)" title="Master Produk">🏷️ <span class="sidebar-collapsed-hide">Master Produk</span></div>
+      <div class="sub-item" onclick="showPage('stock',this)" title="Stok Barang">📊 <span class="sidebar-collapsed-hide">Stok Barang</span></div>
+      <div class="sub-item" onclick="showPage('stockmovement',this)" title="Mutasi Stok">🔄 <span class="sidebar-collapsed-hide">Mutasi Stok</span></div>
+    </div>
+
+    <div class="nav-group sidebar-collapsed-hide" style="margin-top:8px">Keuangan</div>
+    <div class="nav-item" onclick="toggleMenu('menuKeu',this)" title="Keuangan">
+      <span style="font-size:18px;flex-shrink:0">💰</span>
+      <span class="sidebar-collapsed-hide" style="flex:1">Kas & Bank</span>
+      <span class="sidebar-collapsed-hide" id="arrowKeu" style="font-size:10px;transition:.2s">▶</span>
+    </div>
+    <div class="sub-menu" id="menuKeu">
+      <div class="sub-item" onclick="showPage('kas',this)" title="Kas & Bank">💵 <span class="sidebar-collapsed-hide">Kas & Bank</span></div>
+      <div class="sub-item" onclick="showPage('jurnal',this)" title="Jurnal">📒 <span class="sidebar-collapsed-hide">Jurnal Umum</span></div>
+    </div>
+
+    <div class="nav-group sidebar-collapsed-hide" style="margin-top:8px">Laporan</div>
+    <div class="nav-item" onclick="toggleMenu('menuRpt',this)" title="Laporan">
+      <span style="font-size:18px;flex-shrink:0">📈</span>
+      <span class="sidebar-collapsed-hide" style="flex:1">Laporan</span>
+      <span class="sidebar-collapsed-hide" id="arrowRpt" style="font-size:10px;transition:.2s">▶</span>
+    </div>
+    <div class="sub-menu" id="menuRpt">
+      <div class="sub-item" onclick="showPage('neraca',this)" title="Neraca">⚖️ <span class="sidebar-collapsed-hide">Neraca</span></div>
+      <div class="sub-item" onclick="showPage('labarugi',this)" title="Laba Rugi">📊 <span class="sidebar-collapsed-hide">Laba Rugi</span></div>
+      <div class="sub-item" onclick="showPage('aruskas',this)" title="Arus Kas">💸 <span class="sidebar-collapsed-hide">Arus Kas</span></div>
+    </div>
+
+    <div class="nav-group sidebar-collapsed-hide" style="margin-top:8px">Master Data</div>
+    <div class="nav-item" onclick="showPage('customers',this)" title="Pelanggan">
+      <span style="font-size:18px;flex-shrink:0">👥</span>
+      <span class="sidebar-collapsed-hide">Pelanggan</span>
+    </div>
+    <div class="nav-item" onclick="showPage('suppliers',this)" title="Supplier">
+      <span style="font-size:18px;flex-shrink:0">🏭</span>
+      <span class="sidebar-collapsed-hide">Supplier</span>
+    </div>
+
+    <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,.06);padding-top:12px">
+      <div class="nav-item" onclick="doLogout()" title="Keluar">
+        <span style="font-size:18px;flex-shrink:0">🚪</span>
+        <span class="sidebar-collapsed-hide">Keluar</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;color:#6b7280;font-size:20px;padding:4px 6px;border-radius:8px" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">☰</button>
+    <div class="search-box">
+      <span style="color:#9ca3af;font-size:15px">🔍</span>
+      <input type="text" placeholder="Cari transaksi, produk, pelanggan..." id="globalSearch" oninput="globalSearchFn()">
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button onclick="showNotif('info','Notifikasi','5 Invoice akan jatuh tempo dalam 3 hari')" style="position:relative;background:none;border:none;cursor:pointer;padding:8px;border-radius:10px;font-size:18px" title="Notifikasi">
+        🔔
+        <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff"></span>
+      </button>
+      <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;padding:6px 12px;border-radius:12px;cursor:pointer;border:1px solid #e5e7eb">
+        <div class="avatar" style="width:30px;height:30px;font-size:12px">A</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Administrator</div>
+          <div style="font-size:11px;color:#9ca3af">Super Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PAGES CONTAINER -->
+<!-- ═══════════════════════════════════════ -->
+<div style="min-height:calc(100vh - 57px)">
+
+<!-- ▓▓▓▓▓ PAGE: DASHBOARD ▓▓▓▓▓ -->
+<div id="page-dashboard" class="page active">
+  <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <h1 style="font-size:22px;font-weight:800;color:#111827">Dashboard</h1>
+      <p style="color:#9ca3af;font-size:13px" id="dashDate"></p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">📊 Export</button>
+      <button class="btn btn-primary btn-sm" onclick="showNotif('success','Refresh','Data berhasil diperbarui')">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px">
+    <div class="kpi-card">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#eff6ff;border-radius:50%"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="width:46px;height:46px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px rgba(59,130,246,.3)">💵</div>
+        <span class="trend-up">↑ 12.5%</span>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#111827">Rp 285,4 Jt</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:4px">Saldo Kas & Bank</div>
+      <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:72%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#fff7ed;border-radius:50%"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="width:46px;height:46px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px rgba(249,115,22,.3)">📤</div>
+        <span class="trend-up">↑ 5.2%</span>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#111827">Rp 125,8 Jt</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:4px">Total Piutang</div>
+      <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:45%;background:linear-gradient(90deg,#f97316,#fb923c)"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#fef2f2;border-radius:50%"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="width:46px;height:46px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px rgba(239,68,68,.3)">📥</div>
+        <span class="trend-down">↓ 3.1%</span>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#111827">Rp 89,2 Jt</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:4px">Total Hutang</div>
+      <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:31%;background:linear-gradient(90deg,#ef4444,#f87171)"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#f0fdf4;border-radius:50%"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div style="width:46px;height:46px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 12px rgba(34,197,94,.3)">📈</div>
+        <span class="trend-up">↑ 18.7%</span>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#111827">Rp 542,6 Jt</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:4px">Penjualan Bulan Ini</div>
+      <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:85%;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;background:#fee2e2;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚠️</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#991b1b">5 Invoice Overdue</div>
+        <div style="font-size:11px;color:#dc2626">Senilai Rp 45.200.000</div>
+      </div>
+      <button onclick="showPage('invoicesales')" style="margin-left:auto;font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;text-decoration:underline">Lihat →</button>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📦</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#92400e">8 Produk Stok Menipis</div>
+        <div style="font-size:11px;color:#b45309">Perlu restock segera</div>
+      </div>
+      <button onclick="showPage('stock')" style="margin-left:auto;font-size:11px;color:#b45309;background:none;border:none;cursor:pointer;text-decoration:underline">Lihat →</button>
+    </div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;background:#dbeafe;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📝</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#1e40af">3 Quotation Menunggu</div>
+        <div style="font-size:11px;color:#3b82f6">Perlu konfirmasi</div>
+      </div>
+      <button onclick="showPage('quotation')" style="margin-left:auto;font-size:11px;color:#3b82f6;background:none;border:none;cursor:pointer;text-decoration:underline">Lihat →</button>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px">
+    <div class="card" style="padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#111827">Grafik Penjualan & Pembelian</div>
+          <div style="font-size:12px;color:#9ca3af">6 Bulan Terakhir (Juta Rupiah)</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-primary btn-sm">Bulanan</button>
+          <button class="btn btn-outline btn-sm">Tahunan</button>
+        </div>
+      </div>
+      <div class="chart-container"><canvas id="chartSales"></canvas></div>
+    </div>
+    <div class="card" style="padding:20px">
+      <div style="font-weight:800;font-size:15px;color:#111827;margin-bottom:4px">Kategori Penjualan</div>
+      <div style="font-size:12px;color:#9ca3af;margin-bottom:12px">November 2024</div>
+      <div class="chart-container" style="height:160px"><canvas id="chartPie"></canvas></div>
+      <div style="margin-top:12px;space-y:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280"><span class="dot" style="background:#3b82f6"></span>Elektronik</span><span style="font-weight:700;font-size:12px">42% — Rp 228 Jt</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280"><span class="dot" style="background:#22c55e"></span>Furniture</span><span style="font-weight:700;font-size:12px">28% — Rp 152 Jt</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280"><span class="dot" style="background:#f97316"></span>Alat Tulis</span><span style="font-weight:700;font-size:12px">18% — Rp 98 Jt</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280"><span class="dot" style="background:#a855f7"></span>Lainnya</span><span style="font-weight:700;font-size:12px">12% — Rp 65 Jt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM GRID -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card" style="padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-weight:800;font-size:15px;color:#111827">Transaksi Terakhir</div>
+        <button onclick="showPage('kas')" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer">Lihat Semua →</button>
+      </div>
+      <div id="recentTrxList"></div>
+    </div>
+    <div class="card" style="padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-weight:800;font-size:15px;color:#111827">Produk Terlaris</div>
+        <button onclick="showPage('products')" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer">Lihat Semua →</button>
+      </div>
+      <div id="topProductList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: QUOTATION ▓▓▓▓▓ -->
+<div id="page-quotation" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+    <div>
+      <h1 style="font-size:22px;font-weight:800;color:#111827">📝 Quotation</h1>
+      <p style="color:#9ca3af;font-size:13px">Kelola penawaran harga kepada pelanggan</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">📊 Export Excel</button>
+      <button class="btn btn-primary" onclick="openModal('modalQuo')">＋ Buat Quotation</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#111827">24</div><div style="font-size:11px;color:#9ca3af">Total</div></div>
+    <div class="card" style="padding:14px;text-align:center;background:#eff6ff;border-color:#bfdbfe"><div style="font-size:26px;font-weight:800;color:#1d4ed8">8</div><div style="font-size:11px;color:#3b82f6">Menunggu</div></div>
+    <div class="card" style="padding:14px;text-align:center;background:#f0fdf4;border-color:#bbf7d0"><div style="font-size:26px;font-weight:800;color:#15803d">12</div><div style="font-size:11px;color:#22c55e">Disetujui</div></div>
+    <div class="card" style="padding:14px;text-align:center;background:#fef2f2;border-color:#fecaca"><div style="font-size:26px;font-weight:800;color:#dc2626">4</div><div style="font-size:11px;color:#ef4444">Ditolak</div></div>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari nomor/pelanggan..." style="max-width:250px" oninput="filterTable('quoTable',this.value)">
+      <select class="form-select" style="width:150px" onchange="filterTable('quoTable',this.value)"><option value="">Semua Status</option><option>draft</option><option>sent</option><option>approved</option><option>converted</option></select>
+      <input type="date" class="form-control" style="width:150px">
+      <input type="date" class="form-control" style="width:150px">
+    </div>
+    <table><thead><tr>
+      <th>Nomor QUO</th><th>Pelanggan</th><th>Tanggal</th><th>Berlaku</th><th style="text-align:right">Total</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th>
+    </tr></thead><tbody id="quoTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: SALES ORDER ▓▓▓▓▓ -->
+<div id="page-salesorder" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🛍️ Sales Order</h1><p style="color:#9ca3af;font-size:13px">Daftar pesanan penjualan</p></div>
+    <button class="btn btn-primary" onclick="showNotif('info','Sales Order','Gunakan tombol Convert → SO dari Quotation')">＋ Buat SO</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari..." style="max-width:250px" oninput="filterTable('soTable',this.value)">
+      <select class="form-select" style="width:150px"><option>Semua Status</option><option>confirmed</option><option>partial</option><option>completed</option></select>
+    </div>
+    <table><thead><tr><th>Nomor SO</th><th>Pelanggan</th><th>Tanggal</th><th>Ref QUO</th><th style="text-align:right">Total</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="soTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: DELIVERY ORDER ▓▓▓▓▓ -->
+<div id="page-deliveryorder" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🚚 Delivery Order</h1><p style="color:#9ca3af;font-size:13px">Surat jalan pengiriman barang</p></div>
+    <button class="btn btn-primary" onclick="showNotif('info','DO','Buat DO dari Sales Order yang sudah dikonfirmasi')">＋ Buat DO</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <table><thead><tr><th>Nomor DO</th><th>Nomor SO</th><th>Pelanggan</th><th>Tgl Kirim</th><th>Kurir</th><th>No. Resi</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="doTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: INVOICE SALES ▓▓▓▓▓ -->
+<div id="page-invoicesales" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🧾 Invoice Penjualan</h1><p style="color:#9ca3af;font-size:13px">Kelola faktur dan pembayaran piutang</p></div>
+    <button class="btn btn-primary" onclick="openModal('modalInvoiceDetail')">＋ Buat Invoice</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:14px"><div style="font-size:11px;color:#9ca3af">Total Invoice</div><div style="font-size:18px;font-weight:800;color:#111827;margin-top:4px">Rp 825,4 Jt</div></div>
+    <div class="card" style="padding:14px;background:#f0fdf4;border-color:#bbf7d0"><div style="font-size:11px;color:#15803d">Sudah Dibayar</div><div style="font-size:18px;font-weight:800;color:#15803d;margin-top:4px">Rp 699,6 Jt</div></div>
+    <div class="card" style="padding:14px;background:#fffbeb;border-color:#fde68a"><div style="font-size:11px;color:#b45309">Belum Dibayar</div><div style="font-size:18px;font-weight:800;color:#b45309;margin-top:4px">Rp 125,8 Jt</div></div>
+    <div class="card" style="padding:14px;background:#fef2f2;border-color:#fecaca"><div style="font-size:11px;color:#dc2626">Overdue</div><div style="font-size:18px;font-weight:800;color:#dc2626;margin-top:4px">Rp 45,2 Jt</div></div>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari invoice..." style="max-width:250px" oninput="filterTable('invTable',this.value)">
+      <select class="form-select" style="width:150px"><option>Semua Status</option><option>sent</option><option>partial</option><option>paid</option><option>overdue</option></select>
+      <input type="date" class="form-control" style="width:150px">
+      <input type="date" class="form-control" style="width:150px">
+    </div>
+    <table><thead><tr><th>No. Invoice</th><th>Pelanggan</th><th>Tgl Invoice</th><th>Jatuh Tempo</th><th style="text-align:right">Total</th><th style="text-align:right">Sisa</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="invTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: PURCHASE ORDER ▓▓▓▓▓ -->
+<div id="page-purchaseorder" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🛒 Purchase Order</h1><p style="color:#9ca3af;font-size:13px">Kelola pesanan pembelian ke supplier</p></div>
+    <button class="btn btn-primary" onclick="openModal('modalPO')">＋ Buat PO</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari PO..." style="max-width:250px" oninput="filterTable('poTable',this.value)">
+      <select class="form-select" style="width:150px"><option>Semua Status</option><option>draft</option><option>sent</option><option>partial</option><option>completed</option></select>
+    </div>
+    <table><thead><tr><th>Nomor PO</th><th>Supplier</th><th>Tanggal PO</th><th>Exp. Tiba</th><th style="text-align:right">Total</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="poTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: GOODS RECEIPT ▓▓▓▓▓ -->
+<div id="page-goodsreceipt" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">📦 Penerimaan Barang</h1><p style="color:#9ca3af;font-size:13px">Goods Receipt dari Purchase Order</p></div>
+    <button class="btn btn-primary" onclick="showNotif('info','GR','Pilih PO terlebih dahulu untuk membuat GR')">＋ Terima Barang</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <table><thead><tr><th>No. GR</th><th>No. PO</th><th>Supplier</th><th>Tgl Terima</th><th>Gudang</th><th>Dok. Supplier</th><th style="text-align:center">Status</th></tr></thead><tbody id="grTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: INVOICE PURCHASE ▓▓▓▓▓ -->
+<div id="page-invoicepurchase" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">📄 Invoice Pembelian</h1><p style="color:#9ca3af;font-size:13px">Faktur dari supplier & hutang dagang</p></div>
+    <button class="btn btn-primary">＋ Input Invoice</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <table><thead><tr><th>No. Invoice</th><th>Supplier</th><th>Tgl Invoice</th><th>Jatuh Tempo</th><th style="text-align:right">Total</th><th style="text-align:right">Sisa Hutang</th><th style="text-align:center">Status</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="pinvTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: PRODUCTS ▓▓▓▓▓ -->
+<div id="page-products" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🏷️ Master Produk</h1><p style="color:#9ca3af;font-size:13px">Kelola daftar produk & harga</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">📥 Import Excel</button>
+      <button class="btn btn-primary" onclick="showNotif('success','Produk Baru','Form tambah produk dibuka')">＋ Tambah Produk</button>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari produk..." style="max-width:250px" oninput="filterTable('prodTable',this.value)">
+      <select class="form-select" style="width:160px"><option>Semua Kategori</option><option>Elektronik</option><option>Furniture</option><option>Alat Tulis</option></select>
+    </div>
+    <table><thead><tr><th>Kode</th><th>Nama Produk</th><th>Kategori</th><th style="text-align:center">Satuan</th><th style="text-align:right">Harga Beli</th><th style="text-align:right">Harga Jual</th><th style="text-align:center">Stok</th><th style="text-align:center">Status</th></tr></thead><tbody id="prodTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: STOCK ▓▓▓▓▓ -->
+<div id="page-stock" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">📊 Stok Barang</h1><p style="color:#9ca3af;font-size:13px">Monitor persediaan real-time</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">📊 Export</button>
+      <button class="btn btn-warning btn-sm" onclick="showNotif('info','Penyesuaian Stok','Form adjustment stok dibuka')">📦 Penyesuaian</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#111827">156</div><div style="font-size:11px;color:#9ca3af">Total SKU Aktif</div></div>
+    <div class="card" style="padding:14px;text-align:center"><div style="font-size:20px;font-weight:800;color:#1d4ed8">Rp 1,28 M</div><div style="font-size:11px;color:#9ca3af">Nilai Total Stok</div></div>
+    <div class="card" style="padding:14px;text-align:center;background:#fffbeb;border-color:#fde68a"><div style="font-size:26px;font-weight:800;color:#b45309">8</div><div style="font-size:11px;color:#b45309">Stok Menipis</div></div>
+    <div class="card" style="padding:14px;text-align:center;background:#fef2f2;border-color:#fecaca"><div style="font-size:26px;font-weight:800;color:#dc2626">3</div><div style="font-size:11px;color:#dc2626">Stok Habis</div></div>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="text" class="form-control" placeholder="🔍 Cari produk..." style="max-width:250px" oninput="filterTable('stockTable',this.value)">
+      <select class="form-select" style="width:160px"><option>Semua Gudang</option><option>Gudang Utama</option><option>Gudang 2</option></select>
+      <select class="form-select" style="width:160px"><option>Semua Status</option><option>Normal</option><option>Menipis</option><option>Habis</option></select>
+    </div>
+    <table><thead><tr><th>Kode</th><th>Nama Produk</th><th>Kategori</th><th style="text-align:center">Stok</th><th style="text-align:center">Min Stok</th><th style="text-align:right">Avg Cost</th><th style="text-align:right">Nilai Stok</th><th style="text-align:center">Status</th></tr></thead><tbody id="stockTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: STOCK MOVEMENT ▓▓▓▓▓ -->
+<div id="page-stockmovement" class="page">
+  <div style="margin-bottom:20px">
+    <h1 style="font-size:22px;font-weight:800;color:#111827">🔄 Mutasi Stok</h1>
+    <p style="color:#9ca3af;font-size:13px">Riwayat pergerakan barang masuk & keluar</p>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <select class="form-select" style="width:160px"><option>Semua Jenis</option><option>Masuk (IN)</option><option>Keluar (OUT)</option><option>Transfer</option><option>Penyesuaian</option></select>
+      <input type="date" class="form-control" style="width:150px">
+      <input type="date" class="form-control" style="width:150px">
+      <button class="btn btn-primary btn-sm">Filter</button>
+      <button class="btn btn-outline btn-sm">📊 Export</button>
+    </div>
+    <table><thead><tr><th>Tanggal</th><th>Produk</th><th>Referensi</th><th style="text-align:center">Jenis</th><th style="text-align:center">Qty</th><th style="text-align:right">Sebelum</th><th style="text-align:right">Sesudah</th><th style="text-align:right">Nilai</th></tr></thead><tbody id="movTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: KAS ▓▓▓▓▓ -->
+<div id="page-kas" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">💰 Kas & Bank</h1><p style="color:#9ca3af;font-size:13px">Kelola saldo dan mutasi kas</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-success" onclick="openModal('modalKasMasuk')">💰 Kas Masuk</button>
+      <button class="btn btn-danger" onclick="openModal('modalKasKeluar')">💸 Kas Keluar</button>
+    </div>
+  </div>
+  <div id="kasCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px"></div>
+  <div class="card" style="overflow:hidden">
+    <div style="padding:16px 18px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700;font-size:15px;color:#111827">Mutasi Kas Terakhir</div>
+      <button class="btn btn-outline btn-sm">📊 Rekonsiliasi</button>
+    </div>
+    <table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Akun</th><th style="text-align:center">Jenis</th><th style="text-align:right">Jumlah</th><th style="text-align:right">Saldo</th></tr></thead><tbody id="kasTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: JURNAL ▓▓▓▓▓ -->
+<div id="page-jurnal" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">📒 Jurnal Umum</h1><p style="color:#9ca3af;font-size:13px">Jurnal otomatis & manual</p></div>
+    <button class="btn btn-primary" onclick="openModal('modalJurnal')">＋ Jurnal Manual</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div class="filter-bar">
+      <input type="date" class="form-control" style="width:150px">
+      <input type="date" class="form-control" style="width:150px">
+      <select class="form-select" style="width:160px"><option>Semua Jenis</option><option>Manual</option><option>Otomatis</option></select>
+      <button class="btn btn-primary btn-sm">Filter</button>
+    </div>
+    <table><thead><tr><th>Nomor</th><th>Tanggal</th><th>Keterangan</th><th>Referensi</th><th style="text-align:right">Debit</th><th style="text-align:right">Kredit</th><th style="text-align:center">Status</th></tr></thead><tbody id="jurnalTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: NERACA ▓▓▓▓▓ -->
+<div id="page-neraca" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">⚖️ Neraca</h1><p style="color:#9ca3af;font-size:13px">Balance Sheet</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="date" value="2024-11-30" class="form-control" style="width:160px">
+      <button class="btn btn-primary btn-sm">Tampilkan</button>
+      <button onclick="window.print()" class="btn btn-outline btn-sm">🖨️ Print</button>
+    </div>
+  </div>
+  <div class="card" style="padding:32px;max-width:900px" id="neracaContent"></div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: LABA RUGI ▓▓▓▓▓ -->
+<div id="page-labarugi" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">📈 Laporan Laba Rugi</h1><p style="color:#9ca3af;font-size:13px">Profit & Loss Statement</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="date" value="2024-11-01" class="form-control" style="width:150px">
+      <span style="color:#9ca3af">s/d</span>
+      <input type="date" value="2024-11-30" class="form-control" style="width:150px">
+      <button class="btn btn-primary btn-sm">Tampilkan</button>
+      <button onclick="window.print()" class="btn btn-outline btn-sm">🖨️ Print</button>
+    </div>
+  </div>
+  <div class="card" style="padding:32px;max-width:700px" id="labarugiContent"></div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: ARUS KAS ▓▓▓▓▓ -->
+<div id="page-aruskas" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">💸 Laporan Arus Kas</h1><p style="color:#9ca3af;font-size:13px">Cash Flow Statement</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="date" value="2024-11-01" class="form-control" style="width:150px">
+      <span style="color:#9ca3af">s/d</span>
+      <input type="date" value="2024-11-30" class="form-control" style="width:150px">
+      <button class="btn btn-primary btn-sm">Tampilkan</button>
+    </div>
+  </div>
+  <div class="card" style="padding:32px;max-width:700px" id="aruskasContent"></div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: CUSTOMERS ▓▓▓▓▓ -->
+<div id="page-customers" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">👥 Master Pelanggan</h1><p style="color:#9ca3af;font-size:13px">Data pelanggan & piutang</p></div>
+    <button class="btn btn-primary" onclick="showNotif('success','Pelanggan','Form tambah pelanggan dibuka')">＋ Tambah Pelanggan</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <table><thead><tr><th>Kode</th><th>Nama Pelanggan</th><th>Telepon</th><th>Email</th><th>NPWP</th><th style="text-align:right">Kredit Limit</th><th style="text-align:right">Total Piutang</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="custTable"></tbody></table>
+  </div>
+</div>
+
+<!-- ▓▓▓▓▓ PAGE: SUPPLIERS ▓▓▓▓▓ -->
+<div id="page-suppliers" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h1 style="font-size:22px;font-weight:800;color:#111827">🏭 Master Supplier</h1><p style="color:#9ca3af;font-size:13px">Data supplier & hutang dagang</p></div>
+    <button class="btn btn-primary" onclick="showNotif('success','Supplier','Form tambah supplier dibuka')">＋ Tambah Supplier</button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <table><thead><tr><th>Kode</th><th>Nama Supplier</th><th>Telepon</th><th>Email</th><th>Produk Utama</th><th style="text-align:right">Total Hutang</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="suppTable"></tbody></table>
+  </div>
+</div>
+
+</div><!-- end pages -->
+</div><!-- end main -->
+</div><!-- end app -->
+
+<!-- ═══════════════════════════════════════ -->
+<!-- MODALS -->
+<!-- ═══════════════════════════════════════ -->
+
+<!-- MODAL QUOTATION -->
+<div class="modal-overlay" id="modalQuo">
+<div class="modal" style="max-width:900px">
+  <div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:20px 20px 0 0">
+    <div><div style="font-weight:800;font-size:17px;color:#111827">📝 Buat Quotation Baru</div><div style="font-size:12px;color:#9ca3af;margin-top:2px">Nomor: QUO/2024/11/0025 (Auto Generate)</div></div>
+    <button onclick="closeModal('modalQuo')" style="width:32px;height:32px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#6b7280">×</button>
+  </div>
+  <div style="padding:24px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Pelanggan *</label>
+        <select class="form-select">
+          <option>PT. Teknologi Maju</option><option>CV. Bintang Timur</option><option>PT. Sinar Harapan</option><option>Toko Makmur Jaya</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Tanggal *</label>
+        <input type="date" class="form-control" value="2024-11-15">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Berlaku Hingga *</label>
+        <input type="date" class="form-control" value="2024-12-15">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Perihal / Subjek</label>
+      <input type="text" class="form-control" placeholder="Penawaran Pengadaan Peralatan Kantor">
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:16px">
+      <div style="background:#f8fafc;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb">
+        <span style="font-weight:700;font-size:13px;color:#374151">Detail Item Produk</span>
+        <button onclick="addQItem()" class="btn btn-primary btn-sm">＋ Tambah Item</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="min-width:700px">
+          <thead><tr style="background:#f9fafb">
+            <th style="width:200px">Produk</th>
+            <th>Deskripsi</th>
+            <th style="width:80px;text-align:center">Qty</th>
+            <th style="width:70px;text-align:center">Sat.</th>
+            <th style="width:130px;text-align:right">Harga</th>
+            <th style="width:70px;text-align:center">Disk%</th>
+            <th style="width:130px;text-align:right">Total</th>
+            <th style="width:36px"></th>
+          </tr></thead>
+          <tbody id="qItems"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div class="form-group">
+          <label class="form-label">Catatan</label>
+          <textarea class="form-control" rows="2" placeholder="Catatan untuk pelanggan..."></textarea>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Syarat & Ketentuan</label>
+          <textarea class="form-control" rows="3">1. Harga belum termasuk ongkir
+2. Pembayaran 14 hari setelah PO diterima
+3. Garansi sesuai produsen</textarea>
+        </div>
+      </div>
+      <div class="total-box">
+        <div class="stat-row"><span style="color:#6b7280;font-size:13px">Subtotal</span><span id="qSub" style="font-weight:600;font-size:13px">Rp 0</span></div>
+        <div class="stat-row">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:#6b7280;font-size:13px">Diskon</span>
+            <input type="number" id="qDisc" value="0" min="0" max="100" style="width:50px;padding:3px 6px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:12px;text-align:center" oninput="calcQ()">
+            <span style="font-size:12px;color:#9ca3af">%</span>
+          </div>
+          <span id="qDiscAmt" style="color:#ef4444;font-size:13px">- Rp 0</span>
+        </div>
+        <div class="stat-row">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:#6b7280;font-size:13px">PPN</span>
+            <input type="number" id="qTax" value="11" min="0" max="100" style="width:50px;padding:3px 6px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:12px;text-align:center" oninput="calcQ()">
+            <span style="font-size:12px;color:#9ca3af">%</span>
+          </div>
+          <span id="qTaxAmt" style="font-size:13px">Rp 0</span>
+        </div>
+        <div style="border-top:2px solid #bfdbfe;margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:800;font-size:15px;color:#111827">TOTAL</span>
+          <span id="qTotal" style="font-size:22px;font-weight:900;color:#2563eb">Rp 0</span>
+        </div>
+        <div style="margin-top:8px;padding:8px;background:rgba(255,255,255,.7);border-radius:8px">
+          <div style="font-size:11px;color:#6b7280">Terbilang:</div>
+          <div id="qTerbilang" style="font-size:11px;color:#374151;font-style:italic;margin-top:2px">Nol Rupiah</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9">
+      <button onclick="closeModal('modalQuo')" class="btn btn-outline">Batal</button>
+      <button onclick="saveQuo('draft')" class="btn" style="background:#6b7280;color:#fff">💾 Simpan Draft</button>
+      <button onclick="saveQuo('sent')" class="btn btn-primary">📤 Simpan & Kirim</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL INVOICE DETAIL/PREVIEW -->
+<div class="modal-overlay" id="modalInvoiceDetail">
+<div class="modal" style="max-width:780px">
+  <div style="padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:20px 20px 0 0">
+    <div style="font-weight:800;font-size:16px;color:#111827">🧾 Preview Invoice</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="showNotif('success','PDF','Invoice sedang diunduh...')" class="btn btn-danger btn-sm">🖨️ Cetak PDF</button>
+      <button onclick="openModal('modalKasMasuk');closeModal('modalInvoiceDetail')" class="btn btn-success btn-sm">💰 Catat Bayar</button>
+      <button onclick="closeModal('modalInvoiceDetail')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
+    </div>
+  </div>
+  <div style="padding:28px" id="invPreview">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+      <div>
+        <div style="font-size:24px;font-weight:900;color:#1d4ed8;letter-spacing:-0.5px">PT. MAJU JAYA ABADI</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:4px">Jl. Sudirman No. 123, Jakarta Selatan 12190</div>
+        <div style="font-size:12px;color:#6b7280">Telp: (021) 5555-1234 | Email: info@majujaya.co.id</div>
+        <div style="font-size:12px;color:#6b7280">NPWP: 01.234.567.8-901.000</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:32px;font-weight:900;color:#e5e7eb;letter-spacing:2px">INVOICE</div>
+        <div style="font-size:16px;font-weight:800;color:#1d4ed8;margin-top:-4px">INV/2024/11/0042</div>
+        <div style="font-size:12px;color:#9ca3af;margin-top:6px">Tgl Invoice: <strong style="color:#374151">15 Nov 2024</strong></div>
+        <div style="font-size:12px;color:#9ca3af">Jatuh Tempo: <strong style="color:#374151">15 Des 2024</strong></div>
+        <div style="margin-top:8px"><span class="badge badge-warning">⏳ BELUM DIBAYAR</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div style="background:#f8fafc;border-radius:12px;padding:14px">
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;font-weight:600">Kepada Yth:</div>
+        <div style="font-weight:800;color:#111827">PT. Teknologi Maju</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:4px">Jl. HR Rasuna Said Kav. 1<br>Jakarta Selatan 12920</div>
+        <div style="font-size:12px;color:#6b7280">NPWP: 02.345.678.9-012.000</div>
+        <div style="font-size:12px;color:#6b7280">Telp: 021-5252-1234</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:14px">
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;font-weight:600">Transfer ke:</div>
+        <div style="font-weight:800;color:#111827">Bank BCA Cab. Sudirman</div>
+        <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-top:6px;font-family:monospace">1234 5678 90</div>
+        <div style="font-size:12px;color:#6b7280">A/N: PT. Maju Jaya Abadi</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:4px">Bank Mandiri: 1100 0012 3456</div>
+      </div>
+    </div>
+    <table style="margin-bottom:0;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+      <thead><tr style="background:linear-gradient(135deg,#1d4ed8,#2563eb)">
+        <th style="color:#fff;padding:11px 14px;font-size:12px">No</th>
+        <th style="color:#fff;padding:11px 14px;font-size:12px">Deskripsi Produk</th>
+        <th style="color:#fff;padding:11px 14px;font-size:12px;text-align:center">Qty</th>
+        <th style="color:#fff;padding:11px 14px;font-size:12px;text-align:right">Harga Satuan</th>
+        <th style="color:#fff;padding:11px 14px;font-size:12px;text-align:right">Diskon</th>
+        <th style="color:#fff;padding:11px 14px;font-size:12px;text-align:right">Total</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:10px 14px;font-size:12px">1</td><td style="padding:10px 14px"><div style="font-weight:600;font-size:12px">Laptop ASUS VivoBook 15</div><div style="font-size:11px;color:#9ca3af">SN: ABC12345 | Warna: Silver</div></td><td style="padding:10px 14px;text-align:center;font-size:12px">5 Unit</td><td style="padding:10px 14px;text-align:right;font-size:12px">Rp 2.500.000</td><td style="padding:10px 14px;text-align:right;font-size:12px;color:#ef4444">Rp 250.000</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-size:12px">Rp 11.250.000</td></tr>
+        <tr style="background:#f9fafb"><td style="padding:10px 14px;font-size:12px">2</td><td style="padding:10px 14px"><div style="font-weight:600;font-size:12px">Monitor 27" IPS Full HD 144Hz</div><div style="font-size:11px;color:#9ca3af">Brand: LG | Panel: IPS</div></td><td style="padding:10px 14px;text-align:center;font-size:12px">5 Unit</td><td style="padding:10px 14px;text-align:right;font-size:12px">Rp 3.500.000</td><td style="padding:10px 14px;text-align:right;font-size:12px;color:#9ca3af">—</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-size:12px">Rp 17.500.000</td></tr>
+        <tr><td style="padding:10px 14px;font-size:12px">3</td><td style="padding:10px 14px"><div style="font-weight:600;font-size:12px">Kursi Ergonomis Premium</div><div style="font-size:11px;color:#9ca3af">Garansi 2 Tahun</div></td><td style="padding:10px 14px;text-align:center;font-size:12px">10 Unit</td><td style="padding:10px 14px;text-align:right;font-size:12px">Rp 850.000</td><td style="padding:10px 14px;text-align:right;font-size:12px;color:#9ca3af">—</td><td style="padding:10px 14px;text-align:right;font-weight:700;font-size:12px">Rp 8.500.000</td></tr>
+      </tbody>
+      <tfoot style="background:#f8fafc">
+        <tr><td colspan="5" style="padding:8px 14px;text-align:right;font-size:12px;color:#6b7280;font-weight:600">Subtotal</td><td style="padding:8px 14px;text-align:right;font-size:12px;font-weight:700">Rp 37.250.000</td></tr>
+        <tr><td colspan="5" style="padding:6px 14px;text-align:right;font-size:12px;color:#6b7280">PPN 11%</td><td style="padding:6px 14px;text-align:right;font-size:12px">Rp 4.097.500</td></tr>
+        <tr style="background:linear-gradient(135deg,#1d4ed8,#2563eb)"><td colspan="5" style="padding:12px 14px;text-align:right;color:#fff;font-weight:800;font-size:13px">TOTAL TAGIHAN</td><td style="padding:12px 14px;text-align:right;color:#fff;font-weight:900;font-size:16px">Rp 41.347.500</td></tr>
+      </tfoot>
+    </table>
+    <div style="margin-top:16px;padding:12px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px">
+      <span style="font-size:11px;color:#0369a1;font-weight:600">Terbilang: </span>
+      <span style="font-size:11px;color:#0369a1;font-style:italic">Empat puluh satu juta tiga ratus empat puluh tujuh ribu lima ratus rupiah</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px">
+      <div style="font-size:11px;color:#6b7280;max-width:300px">
+        <strong style="color:#374151">Catatan:</strong><br>
+        Pembayaran dapat melalui transfer bank atau tunai. Harap lampirkan nomor invoice pada keterangan transfer. Terima kasih atas kepercayaan Anda.
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:40px">Hormat kami,</div>
+        <div style="font-weight:700;font-size:12px;border-top:1px solid #6b7280;padding-top:6px;min-width:120px">PT. Maju Jaya Abadi</div>
+        <div style="font-size:11px;color:#9ca3af">Direktur Utama</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL PO -->
+<div class="modal-overlay" id="modalPO">
+<div class="modal" style="max-width:780px">
+  <div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;border-radius:20px 20px 0 0">
+    <div><div style="font-weight:800;font-size:17px">🛒 Buat Purchase Order</div><div style="font-size:12px;color:#9ca3af">PO/2024/11/0013 (Auto)</div></div>
+    <button onclick="closeModal('modalPO')" style="width:32px;height:32px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:18px">×</button>
+  </div>
+  <div style="padding:24px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="form-group" style="margin:0"><label class="form-label">Supplier *</label>
+        <select class="form-select"><option>PT. Asus Indonesia</option><option>CV. Office Furniture</option><option>PT. Stationery Plus</option></select></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Tanggal PO</label><input type="date" value="2024-11-15" class="form-control"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Expected Tiba</label><input type="date" value="2024-11-22" class="form-control"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="form-group" style="margin:0"><label class="form-label">Gudang Tujuan</label><select class="form-select"><option>Gudang Utama - Jakarta</option><option>Gudang 2 - Tangerang</option></select></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Catatan</label><input type="text" class="form-control" placeholder="Catatan PO..."></div>
+    </div>
+    <div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:16px">
+      <table>
+        <thead><tr style="background:#f9fafb"><th>Produk</th><th style="width:80px;text-align:center">Qty</th><th style="width:70px;text-align:center">Sat.</th><th style="width:130px;text-align:right">Harga Beli</th><th style="width:130px;text-align:right">Total</th><th style="width:36px"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:8px 12px"><select class="form-select" style="font-size:12px"><option>Laptop ASUS VivoBook</option><option>Monitor 27"</option><option>Kursi Kantor</option></select></td>
+            <td style="padding:8px 12px"><input type="number" value="10" class="form-control" style="text-align:center;font-size:12px"></td>
+            <td style="padding:8px 12px"><input type="text" value="Unit" class="form-control" style="text-align:center;font-size:12px"></td>
+            <td style="padding:8px 12px"><input type="number" value="2100000" class="form-control" style="text-align:right;font-size:12px"></td>
+            <td style="padding:8px 12px;text-align:right;font-weight:700;font-size:12px">Rp 21.000.000</td>
+            <td style="padding:8px 12px"><button style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px">×</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="total-box" style="min-width:260px">
+        <div class="stat-row"><span style="font-size:13px;color:#6b7280">Subtotal</span><span style="font-size:13px;font-weight:600">Rp 21.000.000</span></div>
+        <div class="stat-row"><span style="font-size:13px;color:#6b7280">PPN 11%</span><span style="font-size:13px">Rp 2.310.000</span></div>
+        <div style="border-top:2px solid #bfdbfe;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between">
+          <span style="font-weight:800">TOTAL</span><span style="font-size:18px;font-weight:900;color:#2563eb">Rp 23.310.000</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="closeModal('modalPO')" class="btn btn-outline">Batal</button>
+        <button onclick="savePO()" class="btn btn-primary">📤 Simpan & Kirim ke Supplier</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL KAS MASUK -->
+<div class="modal-overlay" id="modalKasMasuk">
+<div class="modal" style="max-width:460px">
+  <div style="padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;border-radius:20px 20px 0 0">
+    <div style="font-weight:800;font-size:16px;color:#15803d">💰 Penerimaan Kas / Bank</div>
+    <button onclick="closeModal('modalKasMasuk')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
+  </div>
+  <div style="padding:22px">
+    <div class="form-group"><label class="form-label">Akun Kas/Bank *</label><select class="form-select"><option>Bank BCA - Utama (Saldo: Rp 185.400.000)</option><option>Bank Mandiri (Saldo: Rp 84.800.000)</option><option>Kas Operasional (Saldo: Rp 15.200.000)</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Tanggal *</label><input type="date" value="2024-11-15" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Metode Bayar</label><select class="form-select"><option>Transfer Bank</option><option>Tunai</option><option>Cek/Giro</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Referensi Invoice</label><select class="form-select"><option>INV/2024/11/0040 — CV. Bintang Timur (Rp 22.100.000)</option><option>INV/2024/11/0041 — PT. Sinar Harapan (Rp 28.500.000)</option><option>Penerimaan Lainnya</option></select></div>
+    <div class="form-group"><label class="form-label">Keterangan *</label><input type="text" class="form-control" placeholder="Pembayaran invoice..." value="Penerimaan piutang INV/2024/11/0040"></div>
+    <div class="form-group">
+      <label class="form-label">Jumlah Diterima *</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7280;font-size:13px;font-weight:600">Rp</span>
+        <input type="number" class="form-control" placeholder="0" style="padding-left:36px;font-size:16px;font-weight:700;text-align:right" value="22100000">
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">No. Referensi Transfer</label><input type="text" class="form-control" placeholder="No. bukti transfer / kuitansi"></div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onclick="closeModal('modalKasMasuk')" class="btn btn-outline" style="flex:1">Batal</button>
+      <button onclick="saveKas('masuk')" class="btn btn-success" style="flex:2">💰 Simpan Penerimaan</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL KAS KELUAR -->
+<div class="modal-overlay" id="modalKasKeluar">
+<div class="modal" style="max-width:460px">
+  <div style="padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;border-radius:20px 20px 0 0">
+    <div style="font-weight:800;font-size:16px;color:#dc2626">💸 Pengeluaran Kas / Bank</div>
+    <button onclick="closeModal('modalKasKeluar')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
+  </div>
+  <div style="padding:22px">
+    <div class="form-group"><label class="form-label">Akun Kas/Bank *</label><select class="form-select"><option>Bank BCA - Utama (Saldo: Rp 185.400.000)</option><option>Bank Mandiri (Saldo: Rp 84.800.000)</option><option>Kas Operasional (Saldo: Rp 15.200.000)</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Tanggal *</label><input type="date" value="2024-11-15" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Kategori</label><select class="form-select"><option>Pembayaran Supplier</option><option>Gaji Karyawan</option><option>Biaya Operasional</option><option>Listrik & Air</option><option>Lain-lain</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Keterangan *</label><input type="text" class="form-control" value="Pembayaran PO/2024/11/0012 - PT. Stationery Plus"></div>
+    <div class="form-group">
+      <label class="form-label">Jumlah Dikeluarkan *</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7280;font-size:13px;font-weight:600">Rp</span>
+        <input type="number" class="form-control" placeholder="0" style="padding-left:36px;font-size:16px;font-weight:700;text-align:right" value="12500000">
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">No. Bukti / Referensi</label><input type="text" class="form-control" placeholder="No. bukti pengeluaran"></div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onclick="closeModal('modalKasKeluar')" class="btn btn-outline" style="flex:1">Batal</button>
+      <button onclick="saveKas('keluar')" class="btn btn-danger" style="flex:2">💸 Simpan Pengeluaran</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL JURNAL MANUAL -->
+<div class="modal-overlay" id="modalJurnal">
+<div class="modal" style="max-width:700px">
+  <div style="padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;border-radius:20px 20px 0 0">
+    <div style="font-weight:800;font-size:16px">📒 Jurnal Manual</div>
+    <button onclick="closeModal('modalJurnal')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
+  </div>
+  <div style="padding:22px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="form-group" style="margin:0"><label class="form-label">Tanggal Jurnal *</label><input type="date" value="2024-11-15" class="form-control"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Keterangan *</label><input type="text" class="form-control" placeholder="Keterangan jurnal..."></div>
+    </div>
+    <div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <table>
+        <thead><tr style="background:#f9fafb"><th>Akun</th><th>Keterangan Baris</th><th style="text-align:right;width:130px">Debit (Rp)</th><th style="text-align:right;width:130px">Kredit (Rp)</th><th style="width:36px"></th></tr></thead>
+        <tbody id="jLines">
+          <tr>
+            <td style="padding:8px 10px"><select class="form-select" style="font-size:12px"><option>1-0001 Kas Tunai</option><option>1-0002 Bank BCA</option><option>1-1001 Piutang Usaha</option><option>1-2001 Persediaan</option><option>2-0001 Hutang Usaha</option><option>4-0001 Penjualan</option><option>5-0001 HPP</option><option>6-0001 Biaya Gaji</option></select></td>
+            <td style="padding:8px 10px"><input type="text" class="form-control" style="font-size:12px" placeholder="..."></td>
+            <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+            <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+            <td style="padding:8px 10px"><button onclick="removeJLine(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px">×</button></td>
+          </tr>
+          <tr>
+            <td style="padding:8px 10px"><select class="form-select" style="font-size:12px"><option>4-0001 Penjualan</option><option>1-0002 Bank BCA</option><option>1-1001 Piutang Usaha</option><option>2-0001 Hutang Usaha</option></select></td>
+            <td style="padding:8px 10px"><input type="text" class="form-control" style="font-size:12px" placeholder="..."></td>
+            <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+            <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+            <td style="padding:8px 10px"><button onclick="removeJLine(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px">×</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button onclick="addJLine()" style="font-size:12px;color:#3b82f6;background:none;border:none;cursor:pointer;padding:4px 0">＋ Tambah Baris</button>
+    <div id="jurnalBalance" style="display:flex;gap:16px;margin-top:12px;padding:12px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e5e7eb">
+      <span style="font-size:12px;color:#6b7280">Total Debit: <strong id="jTD" style="color:#1d4ed8">Rp 0</strong></span>
+      <span style="font-size:12px;color:#6b7280">Total Kredit: <strong id="jTK" style="color:#7c3aed">Rp 0</strong></span>
+      <span id="jBalance" style="font-size:12px;font-weight:700;margin-left:auto;color:#15803d">✓ BALANCE</span>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9">
+      <button onclick="closeModal('modalJurnal')" class="btn btn-outline">Batal</button>
+      <button onclick="saveJurnal()" class="btn btn-primary">📒 Posting Jurnal</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA DEMO
+// ═══════════════════════════════════════
+const D = {
+  quotations:[
+    {no:'QUO/2024/11/0021',cust:'PT. Teknologi Maju',date:'05/11/2024',valid:'05/12/2024',total:41347500,status:'converted'},
+    {no:'QUO/2024/11/0022',cust:'CV. Bintang Timur',date:'08/11/2024',valid:'08/12/2024',total:15800000,status:'sent'},
+    {no:'QUO/2024/11/0023',cust:'PT. Sinar Harapan',date:'10/11/2024',valid:'10/12/2024',total:28500000,status:'approved'},
+    {no:'QUO/2024/11/0024',cust:'Toko Makmur Jaya',date:'12/11/2024',valid:'12/12/2024',total:8250000,status:'draft'},
+    {no:'QUO/2024/11/0025',cust:'PT. Global Nusantara',date:'14/11/2024',valid:'14/12/2024',total:67200000,status:'sent'},
+  ],
+  salesOrders:[
+    {no:'SO/2024/11/0018',cust:'PT. Teknologi Maju',date:'06/11/2024',quo:'QUO/2024/11/0021',total:41347500,status:'completed'},
+    {no:'SO/2024/11/0019',cust:'CV. Bintang Timur',date:'09/11/2024',quo:'—',total:22100000,status:'partial'},
+    {no:'SO/2024/11/0020',cust:'PT. Sinar Harapan',date:'11/11/2024',quo:'QUO/2024/11/0023',total:28500000,status:'confirmed'},
+  ],
+  deliveryOrders:[
+    {no:'DO/2024/11/0015',so:'SO/2024/11/0018',cust:'PT. Teknologi Maju',date:'07/11/2024',courier:'JNE Express',resi:'JNE00123456789',status:'delivered'},
+    {no:'DO/2024/11/0016',so:'SO/2024/11/0019',cust:'CV. Bintang Timur',date:'10/11/2024',courier:'Sicepat',resi:'SCP987654321',status:'shipped'},
+    {no:'DO/2024/11/0017',so:'SO/2024/11/0019',cust:'CV. Bintang Timur',date:'13/11/2024',courier:'—',resi:'—',status:'draft'},
+  ],
+  invoices:[
+    {no:'INV/2024/11/0039',cust:'PT. Teknologi Maju',date:'07/11/2024',due:'07/12/2024',total:41347500,sisa:0,status:'paid'},
+    {no:'INV/2024/11/0040',cust:'CV. Bintang Timur',date:'10/11/2024',due:'10/12/2024',total:22100000,sisa:22100000,status:'sent'},
+    {no:'INV/2024/11/0041',cust:'PT. Sinar Harapan',date:'12/11/2024',due:'01/11/2024',total:28500000,sisa:28500000,status:'overdue'},
+    {no:'INV/2024/11/0042',cust:'Toko Makmur Jaya',date:'14/11/2024',due:'14/12/2024',total:15400000,sisa:5400000,status:'partial'},
+  ],
+  purchaseOrders:[
+    {no:'PO/2024/11/0010',supp:'PT. Asus Indonesia',date:'01/11/2024',exp:'08/11/2024',total:125000000,status:'completed'},
+    {no:'PO/2024/11/0011',supp:'CV. Office Furniture',date:'05/11/2024',exp:'15/11/2024',total:45000000,status:'partial'},
+    {no:'PO/2024/11/0012',supp:'PT. Stationery Plus',date:'10/11/2024',exp:'17/11/2024',total:12500000,status:'sent'},
+  ],
+  goodsReceipts:[
+    {no:'GR/2024/11/0008',po:'PO/2024/11/0010',supp:'PT. Asus Indonesia',date:'08/11/2024',gudang:'Gudang Utama',dok:'DO-ASUS-2024-089',status:'confirmed'},
+    {no:'GR/2024/11/0009',po:'PO/2024/11/0011',supp:'CV. Office Furniture',date:'12/11/2024',gudang:'Gudang Utama',dok:'DO-OFF-456',status:'confirmed'},
+  ],
+  purchaseInvoices:[
+    {no:'PINV/2024/11/0021',supp:'PT. Asus Indonesia',date:'08/11/2024',due:'08/12/2024',total:125000000,sisa:0,status:'paid'},
+    {no:'PINV/2024/11/0022',supp:'CV. Office Furniture',date:'12/11/2024',due:'12/12/2024',total:45000000,sisa:45000000,status:'sent'},
+    {no:'PINV/2024/11/0023',supp:'PT. Stationery Plus',date:'14/11/2024',due:'14/12/2024',total:12500000,sisa:12500000,status:'sent'},
+  ],
+  products:[
+    {code:'ELK-001',name:'Laptop ASUS VivoBook 15',cat:'Elektronik',unit:'Unit',buy:2100000,sell:2500000,stock:25},
+    {code:'ELK-002',name:'Monitor 27" IPS 144Hz',cat:'Elektronik',unit:'Unit',buy:3200000,sell:3800000,stock:3},
+    {code:'ELK-003',name:'Printer Canon PIXMA G2020',cat:'Elektronik',unit:'Unit',buy:820000,sell:1150000,stock:4},
+    {code:'ELK-004',name:'UPS APC 650VA',cat:'Elektronik',unit:'Unit',buy:620000,sell:890000,stock:12},
+    {code:'FRN-001',name:'Kursi Ergonomis Premium',cat:'Furniture',unit:'Unit',buy:780000,sell:1100000,stock:0},
+    {code:'FRN-002',name:'Meja Standing Desk 160cm',cat:'Furniture',unit:'Unit',buy:1450000,sell:2100000,stock:15},
+    {code:'ATK-001',name:'Kertas A4 80gsm (500lbr)',cat:'Alat Tulis',unit:'Pak',buy:13500,sell:18000,stock:250},
+    {code:'ATK-002',name:'Toner Printer HP LaserJet',cat:'Alat Tulis',unit:'Pcs',buy:180000,sell:265000,stock:8},
+  ],
+  stocks:[
+    {code:'ELK-001',name:'Laptop ASUS VivoBook 15',cat:'Elektronik',stock:25,min:5,avgcost:2100000,status:'normal'},
+    {code:'ELK-002',name:'Monitor 27" IPS 144Hz',cat:'Elektronik',stock:3,min:5,avgcost:3200000,status:'low'},
+    {code:'FRN-001',name:'Kursi Ergonomis Premium',cat:'Furniture',stock:0,min:10,avgcost:780000,status:'out'},
+    {code:'FRN-002',name:'Meja Standing Desk',cat:'Furniture',stock:15,min:5,avgcost:1450000,status:'normal'},
+    {code:'ATK-001',name:'Kertas A4 80gsm',cat:'Alat Tulis',stock:250,min:50,avgcost:13500,status:'normal'},
+    {code:'ELK-003',name:'Printer Canon PIXMA',cat:'Elektronik',stock:4,min:5,avgcost:820000,status:'low'},
+    {code:'ATK-002',name:'Toner Printer HP',cat:'Alat Tulis',stock:8,min:10,avgcost:180000,status:'low'},
+    {code:'ELK-004',name:'UPS APC 650VA',cat:'Elektronik',stock:12,min:3,avgcost:620000,status:'normal'},
+  ],
+  movements:[
+    {date:'15/11/2024',prod:'Laptop ASUS VivoBook',ref:'DO/2024/11/0016',type:'out',qty:5,before:30,after:25,nilai:10500000},
+    {date:'14/11/2024',prod:'Monitor 27" IPS',ref:'GR/2024/11/0009',type:'in',qty:8,before:0,after:8,nilai:25600000},
+    {date:'13/11/2024',prod:'Kursi Ergonomis',ref:'DO/2024/11/0015',type:'out',qty:10,before:10,after:0,nilai:7800000},
+    {date:'12/11/2024',prod:'Kertas A4 80gsm',ref:'GR/2024/11/0008',type:'in',qty:100,before:150,after:250,nilai:1350000},
+    {date:'11/11/2024',prod:'UPS APC 650VA',ref:'ADJ/2024/11/002',type:'adj',qty:1,before:13,after:12,nilai:620000},
+    {date:'10/11/2024',prod:'Printer Canon PIXMA',ref:'DO/2024/11/0014',type:'out',qty:3,before:7,after:4,nilai:2460000},
+  ],
+  kasTransactions:[
+    {date:'15/11/2024',desc:'Penerimaan Pembayaran INV/2024/11/0039',akun:'Bank BCA',type:'in',amount:41347500,saldo:185400000},
+    {date:'13/11/2024',desc:'Pembayaran PO/2024/11/0010 – PT. Asus Indonesia',akun:'Bank BCA',type:'out',amount:125000000,saldo:144052500},
+    {date:'12/11/2024',desc:'Biaya Listrik & Internet Kantor November',akun:'Kas Operasional',type:'out',amount:2500000,saldo:15200000},
+    {date:'10/11/2024',desc:'Penerimaan Piutang CV. Bintang Timur',akun:'Bank Mandiri',type:'in',amount:22100000,saldo:84800000},
+    {date:'08/11/2024',desc:'Pembayaran Gaji Karyawan Oktober 2024',akun:'Bank BCA',type:'out',amount:45000000,saldo:268052500},
+    {date:'05/11/2024',desc:'Pendapatan Bunga Bank Oktober',akun:'Bank BCA',type:'in',amount:1250000,saldo:313052500},
+  ],
+  journals:[
+    {no:'JRN/2024/11/0089',date:'15/11/2024',desc:'Penerimaan Pembayaran INV/2024/11/0039',ref:'Payment',debit:41347500,credit:41347500,status:'posted'},
+    {no:'JRN/2024/11/0088',date:'13/11/2024',desc:'Pembayaran Hutang PO/2024/11/0010',ref:'Payment',debit:125000000,credit:125000000,status:'posted'},
+    {no:'JRN/2024/11/0087',date:'12/11/2024',desc:'Invoice Penjualan INV/2024/11/0041',ref:'Invoice',debit:28500000,credit:28500000,status:'posted'},
+    {no:'JRN/2024/11/0086',date:'12/11/2024',desc:'HPP Delivery Order DO/2024/11/0015',ref:'DO',debit:7800000,credit:7800000,status:'posted'},
+    {no:'JRN/2024/11/0085',date:'10/11/2024',desc:'Penyesuaian Stok UPS APC',ref:'Manual',debit:620000,credit:620000,status:'posted'},
+  ],
+  customers:[
+    {code:'CUST-001',name:'PT. Teknologi Maju',phone:'021-5252-1234',email:'procurement@teknomaju.co.id',npwp:'02.345.678.9-012.000',limit:200000000,piutang:0},
+    {code:'CUST-002',name:'CV. Bintang Timur',phone:'031-7777-4321',email:'admin@binttimur.com',npwp:'03.456.789.0-013.000',limit:50000000,piutang:22100000},
+    {code:'CUST-003',name:'PT. Sinar Harapan',phone:'022-4444-5678',email:'purchase@sinarharapan.id',npwp:'04.567.890.1-014.000',limit:100000000,piutang:28500000},
+    {code:'CUST-004',name:'Toko Makmur Jaya',phone:'0812-3456-7890',email:'tokomakmur@gmail.com',npwp:'—',limit:20000000,piutang:5400000},
+    {code:'CUST-005',name:'PT. Global Nusantara',phone:'021-8888-9999',email:'finance@globnus.co.id',npwp:'05.678.901.2-015.000',limit:500000000,piutang:0},
+  ],
+  suppliers:[
+    {code:'SUPP-001',name:'PT. Asus Indonesia',phone:'021-2929-1234',email:'sales@asus.co.id',produk:'Laptop, Monitor, PC',hutang:0},
+    {code:'SUPP-002',name:'CV. Office Furniture',phone:'021-3838-5678',email:'info@officefurni.com',produk:'Kursi, Meja Kantor',hutang:45000000},
+    {code:'SUPP-003',name:'PT. Stationery Plus',phone:'021-4747-9012',email:'order@statplus.id',produk:'Alat Tulis, Kertas',hutang:12500000},
+    {code:'SUPP-004',name:'PT. APC Power Systems',phone:'021-5656-3456',email:'sales@apc.co.id',produk:'UPS, Power Supply',hutang:0},
+  ],
+  recentTrx:[
+    {icon:'📥',type:'in',desc:'Pembayaran dari PT. Teknologi Maju',sub:'Bank BCA • 15 Nov 2024',amount:41347500},
+    {icon:'📤',type:'out',desc:'Bayar PO ke PT. Asus Indonesia',sub:'Bank BCA • 13 Nov 2024',amount:125000000},
+    {icon:'📤',type:'out',desc:'Gaji Karyawan Oktober 2024',sub:'Bank BCA • 08 Nov 2024',amount:45000000},
+    {icon:'📥',type:'in',desc:'Piutang CV. Bintang Timur',sub:'Bank Mandiri • 10 Nov 2024',amount:22100000},
+    {icon:'📤',type:'out',desc:'Listrik & Internet Kantor',sub:'Kas Operasional • 12 Nov 2024',amount:2500000},
+  ],
+  topProducts:[
+    {name:'Laptop ASUS VivoBook',cat:'Elektronik',sold:42,revenue:105000000,pct:85},
+    {name:'Monitor 27" IPS',cat:'Elektronik',sold:28,revenue:106400000,pct:72},
+    {name:'Kursi Ergonomis',cat:'Furniture',sold:65,revenue:71500000,pct:58},
+    {name:'Kertas A4 80gsm',cat:'Alat Tulis',sold:320,revenue:5760000,pct:30},
+    {name:'Printer Canon PIXMA',cat:'Elektronik',sold:18,revenue:20700000,pct:25},
+  ]
+};
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+const rp = n => 'Rp '+Number(n).toLocaleString('id-ID');
+const rpS = n => {
+  if(n>=1e9) return 'Rp '+(n/1e9).toFixed(1)+' M';
+  if(n>=1e6) return 'Rp '+(n/1e6).toFixed(1)+' Jt';
+  return 'Rp '+Number(n).toLocaleString('id-ID');
+};
+
+const badges = {
+  draft:'<span class="badge badge-gray">Draft</span>',
+  sent:'<span class="badge badge-info">📤 Terkirim</span>',
+  approved:'<span class="badge badge-success">✓ Disetujui</span>',
+  converted:'<span class="badge badge-purple">🔄 Dikonversi</span>',
+  confirmed:'<span class="badge badge-info">✓ Dikonfirmasi</span>',
+  partial:'<span class="badge badge-warning">⚡ Sebagian</span>',
+  completed:'<span class="badge badge-success">✅ Selesai</span>',
+  cancelled:'<span class="badge badge-danger">✗ Batal</span>',
+  paid:'<span class="badge badge-success">✓ Lunas</span>',
+  overdue:'<span class="badge badge-danger">⚠ Overdue</span>',
+  shipped:'<span class="badge badge-info">🚚 Dikirim</span>',
+  delivered:'<span class="badge badge-success">✅ Terkirim</span>',
+  posted:'<span class="badge badge-success">✓ Posted</span>',
+  normal:'<span class="badge badge-success">Normal</span>',
+  low:'<span class="badge badge-warning">⚠ Menipis</span>',
+  out:'<span class="badge badge-danger">🔴 Habis</span>',
+};
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+let currentPage = 'dashboard';
+function showPage(p, el) {
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item,.sub-item').forEach(x=>x.classList.remove('active'));
+  const pg = document.getElementById('page-'+p);
+  if(pg) pg.classList.add('active');
+  if(el) el.classList.add('active');
+  currentPage = p;
+  renderPage(p);
+  // close all modals
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('show'));
+}
+
+function toggleMenu(id, el) {
+  const m = document.getElementById(id);
+  const isOpen = m.classList.contains('open');
+  document.querySelectorAll('.sub-menu').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('[id^="arrow"]').forEach(x=>{x.style.transform='rotate(0deg)'});
+  if(!isOpen) {
+    m.classList.add('open');
+    const arrow = document.getElementById('arrow'+id.replace('menu',''));
+    if(arrow) arrow.style.transform='rotate(90deg)';
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('main').classList.toggle('collapsed');
+}
+
+// ═══════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+// Backdrop click
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')});
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('show'));
+});
+
+// ═══════════════════════════════════════
+// NOTIFICATION
+// ═══════════════════════════════════════
+let notifTimer;
+function showNotif(type,title,msg) {
+  const configs = {
+    success:{bg:'#dcfce7',color:'#15803d',icon:'✅'},
+    error:{bg:'#fee2e2',color:'#dc2626',icon:'❌'},
+    warning:{bg:'#fef3c7',color:'#b45309',icon:'⚠️'},
+    info:{bg:'#dbeafe',color:'#1d4ed8',icon:'ℹ️'},
+  };
+  const c = configs[type]||configs.info;
+  const el = document.getElementById('notif');
+  document.getElementById('notifIcon').style.background=c.bg;
+  document.getElementById('notifIcon').style.color=c.color;
+  document.getElementById('notifIcon').textContent=c.icon;
+  document.getElementById('notifTitle').textContent=title;
+  document.getElementById('notifMsg').textContent=msg;
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer=setTimeout(()=>el.classList.remove('show'),3500);
+}
+function hideNotif(){document.getElementById('notif').classList.remove('show')}
+
+// ═══════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════
+function renderPage(p) {
+  const renders = {
+    dashboard:renderDashboard,
+    quotation:()=>renderTable('quoTable',D.quotations,renderQRow),
+    salesorder:()=>renderTable('soTable',D.salesOrders,renderSORow),
+    deliveryorder:()=>renderTable('doTable',D.deliveryOrders,renderDORow),
+    invoicesales:()=>renderTable('invTable',D.invoices,renderInvRow),
+    purchaseorder:()=>renderTable('poTable',D.purchaseOrders,renderPORow),
+    goodsreceipt:()=>renderTable('grTable',D.goodsReceipts,renderGRRow),
+    invoicepurchase:()=>renderTable('pinvTable',D.purchaseInvoices,renderPInvRow),
+    products:()=>renderTable('prodTable',D.products,renderProdRow),
+    stock:()=>renderTable('stockTable',D.stocks,renderStockRow),
+    stockmovement:()=>renderTable('movTable',D.movements,renderMovRow),
+    kas:renderKas,
+    jurnal:()=>renderTable('jurnalTable',D.journals,renderJurnalRow),
+    neraca:renderNeraca,
+    labarugi:renderLabaRugi,
+    aruskas:renderArusKas,
+    customers:()=>renderTable('custTable',D.customers,renderCustRow),
+    suppliers:()=>renderTable('suppTable',D.suppliers,renderSuppRow),
+  };
+  if(renders[p]) renders[p]();
+}
+
+function renderTable(id, data, rowFn) {
+  const tb = document.getElementById(id);
+  if(tb) tb.innerHTML = data.map(rowFn).join('');
+}
+
+function filterTable(id, val) {
+  const rows = document.querySelectorAll('#'+id+' tr');
+  rows.forEach(r=>{
+    r.style.display = r.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// ROW RENDERERS
+function renderQRow(q) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px;cursor:pointer" onclick="openModal('modalInvoiceDetail')">${q.no}</span></td>
+    <td style="font-weight:600">${q.cust}</td>
+    <td style="color:#6b7280">${q.date}</td>
+    <td style="color:#6b7280">${q.valid}</td>
+    <td style="text-align:right;font-weight:700">${rp(q.total)}</td>
+    <td style="text-align:center">${badges[q.status]||q.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm" onclick="openModal('modalInvoiceDetail')">Detail</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626" onclick="showNotif('success','PDF','Mengunduh ${q.no}...')">PDF</button>
+        ${q.status!=='converted'?`<button class="btn btn-sm" style="background:#dcfce7;color:#15803d" onclick="convertQtoSO('${q.no}')">→SO</button>`:''}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderSORow(s) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${s.no}</span></td>
+    <td style="font-weight:600">${s.cust}</td>
+    <td style="color:#6b7280">${s.date}</td>
+    <td style="color:#6b7280;font-size:12px">${s.quo}</td>
+    <td style="text-align:right;font-weight:700">${rp(s.total)}</td>
+    <td style="text-align:center">${badges[s.status]||s.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm">Detail</button>
+        <button class="btn btn-sm" style="background:#dbeafe;color:#1d4ed8" onclick="showNotif('success','DO Dibuat','Surat jalan berhasil dibuat!')">→DO</button>
+        <button class="btn btn-sm" style="background:#ede9fe;color:#7c3aed" onclick="openModal('modalInvoiceDetail')">→INV</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderDORow(d) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${d.no}</span></td>
+    <td style="color:#6b7280;font-size:12px">${d.so}</td>
+    <td style="font-weight:600">${d.cust}</td>
+    <td style="color:#6b7280">${d.date}</td>
+    <td>${d.courier}</td>
+    <td style="font-size:12px;color:#6b7280;font-family:monospace">${d.resi}</td>
+    <td style="text-align:center">${badges[d.status]||d.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm" onclick="showNotif('info','Detail DO','Membuka detail surat jalan...')">Detail</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626" onclick="showNotif('success','PDF','Mengunduh surat jalan...')">PDF</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderInvRow(i) {
+  const overdue = i.status==='overdue';
+  return `<tr ${overdue?'style="background:#fff5f5"':''}>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px;cursor:pointer" onclick="openModal('modalInvoiceDetail')">${i.no}</span></td>
+    <td style="font-weight:600">${i.cust}</td>
+    <td style="color:#6b7280">${i.date}</td>
+    <td style="${overdue?'color:#dc2626;font-weight:700':'color:#6b7280'}">${i.due}</td>
+    <td style="text-align:right;font-weight:700">${rp(i.total)}</td>
+    <td style="text-align:right;font-weight:700;color:${i.sisa>0?'#b45309':'#15803d'}">${rp(i.sisa)}</td>
+    <td style="text-align:center">${badges[i.status]||i.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm" onclick="openModal('modalInvoiceDetail')">Detail</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626" onclick="showNotif('success','PDF','Mengunduh invoice...')">PDF</button>
+        ${i.status!=='paid'?`<button class="btn btn-sm" style="background:#dcfce7;color:#15803d" onclick="openModal('modalKasMasuk')">Bayar</button>`:''}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderPORow(p) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${p.no}</span></td>
+    <td style="font-weight:600">${p.supp}</td>
+    <td style="color:#6b7280">${p.date}</td>
+    <td style="color:#6b7280">${p.exp}</td>
+    <td style="text-align:right;font-weight:700">${rp(p.total)}</td>
+    <td style="text-align:center">${badges[p.status]||p.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm">Detail</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626" onclick="showNotif('success','PDF','Mengunduh PO...')">PDF</button>
+        ${p.status!=='completed'?`<button class="btn btn-sm" style="background:#dcfce7;color:#15803d" onclick="showNotif('success','GR','Form penerimaan barang dibuka')">Terima</button>`:''}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderGRRow(g) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${g.no}</span></td>
+    <td style="color:#6b7280;font-size:12px">${g.po}</td>
+    <td style="font-weight:600">${g.supp}</td>
+    <td style="color:#6b7280">${g.date}</td>
+    <td>${g.gudang}</td>
+    <td style="font-size:12px;color:#6b7280">${g.dok}</td>
+    <td style="text-align:center">${badges[g.status]||g.status}</td>
+  </tr>`;
+}
+
+function renderPInvRow(p) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${p.no}</span></td>
+    <td style="font-weight:600">${p.supp}</td>
+    <td style="color:#6b7280">${p.date}</td>
+    <td style="color:#6b7280">${p.due}</td>
+    <td style="text-align:right;font-weight:700">${rp(p.total)}</td>
+    <td style="text-align:right;font-weight:700;color:${p.sisa>0?'#dc2626':'#15803d'}">${rp(p.sisa)}</td>
+    <td style="text-align:center">${badges[p.status]||p.status}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm">Detail</button>
+        ${p.sisa>0?`<button class="btn btn-sm" style="background:#fee2e2;color:#dc2626" onclick="openModal('modalKasKeluar')">Bayar</button>`:''}
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderProdRow(p) {
+  const sColor = p.stock===0?'#dc2626':p.stock<5?'#b45309':'#111827';
+  return `<tr>
+    <td style="font-family:monospace;font-size:12px;color:#6b7280">${p.code}</td>
+    <td style="font-weight:600">${p.name}</td>
+    <td>${p.cat}</td>
+    <td style="text-align:center">${p.unit}</td>
+    <td style="text-align:right;color:#6b7280">${rp(p.buy)}</td>
+    <td style="text-align:right;font-weight:700;color:#2563eb">${rp(p.sell)}</td>
+    <td style="text-align:center;font-weight:800;font-size:16px;color:${sColor}">${p.stock}</td>
+    <td style="text-align:center"><span class="badge badge-success">Aktif</span></td>
+  </tr>`;
+}
+
+function renderStockRow(s) {
+  const value = s.stock * s.avgcost;
+  const rowBg = s.status==='out'?'background:#fff5f5':s.status==='low'?'background:#fffbeb':'';
+  return `<tr style="${rowBg}">
+    <td style="font-family:monospace;font-size:12px;color:#6b7280">${s.code}</td>
+    <td style="font-weight:600">${s.name}</td>
+    <td>${s.cat}</td>
+    <td style="text-align:center;font-size:18px;font-weight:900;color:${s.status==='out'?'#dc2626':s.status==='low'?'#b45309':'#111827'}">${s.stock}</td>
+    <td style="text-align:center;color:#9ca3af">${s.min}</td>
+    <td style="text-align:right;color:#6b7280">${rp(s.avgcost)}</td>
+    <td style="text-align:right;font-weight:700;color:#2563eb">${rp(value)}</td>
+    <td style="text-align:center">${badges[s.status]||s.status}</td>
+  </tr>`;
+}
+
+function renderMovRow(m) {
+  const typeMap = {in:{label:'📥 MASUK',bg:'#dcfce7',c:'#15803d'},out:{label:'📤 KELUAR',bg:'#fee2e2',c:'#dc2626'},adj:{label:'🔄 ADJ',bg:'#fef3c7',c:'#b45309'}};
+  const t = typeMap[m.type]||typeMap.adj;
+  return `<tr>
+    <td style="color:#6b7280;font-size:12px">${m.date}</td>
+    <td style="font-weight:600">${m.prod}</td>
+    <td style="color:#2563eb;font-size:12px">${m.ref}</td>
+    <td style="text-align:center"><span style="background:${t.bg};color:${t.c};font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px">${t.label}</span></td>
+    <td style="text-align:center;font-weight:800;font-size:15px;color:${t.c}">${m.type==='in'?'+':'-'}${m.qty}</td>
+    <td style="text-align:right;color:#9ca3af">${m.before}</td>
+    <td style="text-align:right;font-weight:700">${m.after}</td>
+    <td style="text-align:right;color:#6b7280">${rp(m.nilai)}</td>
+  </tr>`;
+}
+
+function renderJurnalRow(j) {
+  return `<tr>
+    <td><span style="color:#2563eb;font-weight:700;font-size:12px">${j.no}</span></td>
+    <td style="color:#6b7280">${j.date}</td>
+    <td style="font-size:12px">${j.desc}</td>
+    <td style="color:#9ca3af;font-size:12px">${j.ref}</td>
+    <td style="text-align:right;color:#2563eb;font-weight:700">${rp(j.debit)}</td>
+    <td style="text-align:right;color:#7c3aed;font-weight:700">${rp(j.credit)}</td>
+    <td style="text-align:center">${badges[j.status]||j.status}</td>
+  </tr>`;
+}
+
+function renderCustRow(c) {
+  return `<tr>
+    <td style="font-family:monospace;font-size:12px;color:#6b7280">${c.code}</td>
+    <td style="font-weight:700">${c.name}</td>
+    <td style="color:#6b7280">${c.phone}</td>
+    <td style="color:#6b7280;font-size:12px">${c.email}</td>
+    <td style="font-size:12px;color:#9ca3af">${c.npwp}</td>
+    <td style="text-align:right">${rp(c.limit)}</td>
+    <td style="text-align:right;font-weight:700;color:${c.piutang>0?'#b45309':'#15803d'}">${rp(c.piutang)}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm">Edit</button>
+        <button class="btn btn-sm" style="background:#dbeafe;color:#1d4ed8" onclick="showPage('invoicesales')">Piutang</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function renderSuppRow(s) {
+  return `<tr>
+    <td style="font-family:monospace;font-size:12px;color:#6b7280">${s.code}</td>
+    <td style="font-weight:700">${s.name}</td>
+    <td style="color:#6b7280">${s.phone}</td>
+    <td style="color:#6b7280;font-size:12px">${s.email}</td>
+    <td style="font-size:12px;color:#6b7280">${s.produk}</td>
+    <td style="text-align:right;font-weight:700;color:${s.hutang>0?'#dc2626':'#15803d'}">${rp(s.hutang)}</td>
+    <td style="text-align:center">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm">Edit</button>
+        <button class="btn btn-sm" style="background:#ede9fe;color:#7c3aed" onclick="openModal('modalPO')">+ PO</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+// ═══════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard() {
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  document.getElementById('recentTrxList').innerHTML = D.recentTrx.map(t=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f9fafb">
+      <div style="width:36px;height:36px;border-radius:10px;background:${t.type==='in'?'#dcfce7':'#fee2e2'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${t.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.desc}</div>
+        <div style="font-size:11px;color:#9ca3af">${t.sub}</div>
+      </div>
+      <div style="font-weight:700;font-size:12px;color:${t.type==='in'?'#15803d':'#dc2626'};flex-shrink:0">${t.type==='in'?'+':'-'}${rpS(t.amount)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('topProductList').innerHTML = D.topProducts.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0">
+      <div style="width:26px;height:26px;border-radius:8px;background:#dbeafe;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          <div style="flex:1;height:4px;background:#f1f5f9;border-radius:2px"><div style="height:100%;width:${p.pct}%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:2px"></div></div>
+          <span style="font-size:10px;color:#9ca3af;white-space:nowrap">${p.sold} terjual</span>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#374151;flex-shrink:0">${rpS(p.revenue)}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// KAS
+// ═══════════════════════════════════════
+function renderKas() {
+  const accounts = [
+    {name:'Kas Operasional',type:'Kas Tunai',icon:'💵',bal:15200000,color:'#dcfce7',border:'#86efac'},
+    {name:'Bank BCA - Utama',type:'Rekening Bank',icon:'🏦',bal:185400000,color:'#dbeafe',border:'#93c5fd'},
+    {name:'Bank Mandiri',type:'Rekening Bank',icon:'🏦',bal:84800000,color:'#fef3c7',border:'#fcd34d'},
+  ];
+  document.getElementById('kasCards').innerHTML = accounts.map(a=>`
+    <div class="card" style="padding:18px;background:${a.color};border-color:${a.border}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="font-size:26px">${a.icon}</div>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#111827">${a.name}</div>
+          <div style="font-size:11px;color:#6b7280">${a.type}</div>
+        </div>
+      </div>
+      <div style="font-size:20px;font-weight:900;color:#111827">${rp(a.bal)}</div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button onclick="openModal('modalKasMasuk')" class="btn btn-sm" style="flex:1;background:#fff;border:1px solid #d1fae5;color:#15803d;justify-content:center">+ Masuk</button>
+        <button onclick="openModal('modalKasKeluar')" class="btn btn-sm" style="flex:1;background:#fff;border:1px solid #fecaca;color:#dc2626;justify-content:center">- Keluar</button>
+      </div>
+    </div>
+  `).join('');
+
+  renderTable('kasTable', D.kasTransactions, t=>`<tr>
+    <td style="color:#6b7280">${t.date}</td>
+    <td style="font-size:12px">${t.desc}</td>
+    <td style="color:#6b7280">${t.akun}</td>
+    <td style="text-align:center">
+      <span style="background:${t.type==='in'?'#dcfce7':'#fee2e2'};color:${t.type==='in'?'#15803d':'#dc2626'};font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px">${t.type==='in'?'📥 MASUK':'📤 KELUAR'}</span>
+    </td>
+    <td style="text-align:right;font-weight:700;color:${t.type==='in'?'#15803d':'#dc2626'}">${t.type==='in'?'+':'-'}${rp(t.amount)}</td>
+    <td style="text-align:right;font-weight:700">${rp(t.saldo)}</td>
+  </tr>`);
+}
+
+// ═══════════════════════════════════════
+// NERACA
+// ═══════════════════════════════════════
+function renderNeraca() {
+  const sec = (title,items,total,color)=>`
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;color:${color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${title}</div>
+      ${items.map(([n,v])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280">${n}</span><span style="font-size:13px;font-weight:600">${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:2px solid #e5e7eb;margin-top:4px">
+        <span style="font-weight:700;font-size:12px">Total</span>
+        <span style="font-weight:800;font-size:13px;color:${color}">${total}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('neracaContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div>
+      <div style="font-weight:700;color:#6b7280;margin-top:4px">NERACA / BALANCE SHEET</div>
+      <div style="font-size:13px;color:#9ca3af;margin-top:2px">Per 30 November 2024</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+      <div>
+        <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;padding:10px 14px;border-radius:10px;font-weight:800;margin-bottom:14px">AKTIVA (ASET)</div>
+        ${sec('Aktiva Lancar',[['Kas Tunai','Rp 15.200.000'],['Bank BCA','Rp 185.400.000'],['Bank Mandiri','Rp 84.800.000'],['Piutang Usaha','Rp 125.800.000'],['Persediaan Barang','Rp 98.385.000'],['Uang Muka','Rp 5.000.000']],'Rp 514.585.000','#2563eb')}
+        ${sec('Aktiva Tetap',[['Kendaraan','Rp 250.000.000'],['Peralatan Kantor','Rp 85.000.000'],['Ak. Penyusutan','(Rp 45.000.000)']],'Rp 290.000.000','#7c3aed')}
+        <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;margin-top:4px">
+          <span>TOTAL AKTIVA</span><span>Rp 804.585.000</span>
+        </div>
+      </div>
+      <div>
+        <div style="background:linear-gradient(135deg,#374151,#1f2937);color:#fff;padding:10px 14px;border-radius:10px;font-weight:800;margin-bottom:14px">PASIVA (LIABILITAS & EKUITAS)</div>
+        ${sec('Kewajiban Lancar',[['Hutang Usaha','Rp 89.200.000'],['Hutang PPN','Rp 12.500.000'],['Hutang Gaji','Rp 15.000.000']],'Rp 116.700.000','#dc2626')}
+        ${sec('Kewajiban Jangka Panjang',[['Hutang Bank','Rp 150.000.000']],'Rp 150.000.000','#b45309')}
+        ${sec('Ekuitas',[['Modal Disetor','Rp 400.000.000'],['Laba Ditahan','Rp 95.685.000'],['Laba Tahun Berjalan','Rp 42.200.000']],'Rp 537.885.000','#15803d')}
+        <div style="background:linear-gradient(135deg,#374151,#1f2937);color:#fff;padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;margin-top:4px">
+          <span>TOTAL PASIVA</span><span>Rp 804.585.000</span>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <span style="background:#dcfce7;color:#15803d;font-size:13px;font-weight:800;padding:6px 16px;border-radius:20px">✓ BALANCE (Aktiva = Pasiva)</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// LABA RUGI
+// ═══════════════════════════════════════
+function renderLabaRugi() {
+  const sec = (emoji,title,color,bg,items,total,sign='') => `
+    <div style="margin-bottom:18px">
+      <div style="background:${bg};padding:10px 14px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between">
+        <span style="font-weight:800;color:${color}">${emoji} ${title}</span>
+      </div>
+      ${items.map(([n,v])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280;padding-left:4px">${n}</span><span style="font-size:13px;font-weight:600;color:${color}">${sign}${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-top:2px solid #e5e7eb;margin-top:4px">
+        <span style="font-weight:700">Total ${title}</span>
+        <span style="font-weight:800;font-size:14px;color:${color}">${sign}${total}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('labarugiContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div>
+      <div style="font-weight:700;color:#6b7280;margin-top:4px">LAPORAN LABA RUGI</div>
+      <div style="font-size:13px;color:#9ca3af">Periode: 1 November – 30 November 2024</div>
+    </div>
+    ${sec('📦','PENDAPATAN','#15803d','#f0fdf4',[['Penjualan Elektronik','Rp 231.100.000'],['Penjualan Furniture','Rp 195.000.000'],['Penjualan Alat Tulis','Rp 116.500.000']],'Rp 542.600.000')}
+    ${sec('🔻','HARGA POKOK PENJUALAN (HPP)','#dc2626','#fef2f2',[['HPP Elektronik','Rp 154.100.000'],['HPP Furniture','Rp 128.700.000'],['HPP Alat Tulis','Rp 82.500.000']],'Rp 365.300.000','(')}
+    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #86efac;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <span style="font-weight:800;font-size:15px;color:#166534">LABA KOTOR</span>
+      <span style="font-size:22px;font-weight:900;color:#15803d">Rp 177.300.000</span>
+    </div>
+    ${sec('💸','BIAYA OPERASIONAL','#b45309','#fffbeb',[['Gaji & Tunjangan','Rp 75.000.000'],['Sewa Kantor','Rp 25.000.000'],['Listrik & Telepon','Rp 8.500.000'],['Penyusutan','Rp 5.000.000'],['Biaya Pemasaran','Rp 12.600.000']],'Rp 126.100.000','(')}
+    <div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;margin-bottom:18px">
+      <span style="font-weight:700;color:#1e40af">LABA OPERASIONAL</span>
+      <span style="font-weight:800;color:#1d4ed8;font-size:16px">Rp 51.200.000</span>
+    </div>
+    <div style="padding:0 4px;margin-bottom:14px">
+      <div class="stat-row"><span style="font-size:13px;color:#6b7280">Pendapatan Bunga Bank</span><span style="font-size:13px;font-weight:600;color:#15803d">+ Rp 1.500.000</span></div>
+      <div class="stat-row"><span style="font-size:13px;color:#6b7280">Pajak Penghasilan (PPh 25%)</span><span style="font-size:13px;font-weight:600;color:#dc2626">(Rp 10.500.000)</span></div>
+    </div>
+    <div style="background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;border-radius:14px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:18px;font-weight:900">🎉 LABA BERSIH</div>
+        <div style="font-size:12px;opacity:.8;margin-top:2px">Net Profit Margin: 7.78% | ↑ 18.7% vs bulan lalu</div>
+      </div>
+      <div style="font-size:28px;font-weight:900">Rp 42.200.000</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// ARUS KAS
+// ═══════════════════════════════════════
+function renderArusKas() {
+  const sec = (roman,title,color,bg,rows,net,pos)=>`
+    <div style="margin-bottom:20px">
+      <div style="background:${bg};padding:10px 14px;border-radius:10px;margin-bottom:10px">
+        <span style="font-weight:800;color:${color}">${roman}. ${title}</span>
+      </div>
+      ${rows.map(([n,v,isIn])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280;padding-left:4px">${n}</span><span style="font-size:13px;font-weight:600;color:${isIn?'#15803d':'#dc2626'}">${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-top:2px solid #e5e7eb;margin-top:4px">
+        <span style="font-weight:700;font-size:13px">Net Arus Kas ${title}</span>
+        <span style="font-weight:800;color:${pos?'#15803d':'#dc2626'};font-size:14px">${net}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('aruskasContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div>
+      <div style="font-weight:700;color:#6b7280;margin-top:4px">LAPORAN ARUS KAS</div>
+      <div style="font-size:13px;color:#9ca3af">Periode: 1 November – 30 November 2024</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:12px;padding:14px;display:flex;justify-content:space-between;margin-bottom:20px;border:1px solid #e5e7eb">
+      <span style="font-weight:700;color:#374151">💰 Saldo Awal (1 November 2024)</span>
+      <span style="font-weight:900;font-size:16px;color:#111827">Rp 167.300.000</span>
+    </div>
+    ${sec('I','Aktivitas Operasi','#1d4ed8','#eff6ff',[['Penerimaan dari Pelanggan','+ Rp 485.200.000',true],['Pendapatan Bunga','+ Rp 1.500.000',true],['Pembayaran ke Supplier','(Rp 182.500.000)',false],['Pembayaran Gaji','(Rp 75.000.000)',false],['Sewa Kantor','(Rp 25.000.000)',false],['Biaya Operasional Lainnya','(Rp 26.100.000)',false]],'+ Rp 178.100.000',true)}
+    ${sec('II','Aktivitas Investasi','#7c3aed','#f5f3ff',[['Pembelian Kendaraan Baru','(Rp 45.000.000)',false]],'(Rp 45.000.000)',false)}
+    ${sec('III','Aktivitas Pendanaan','#b45309','#fffbeb',[['Cicilan Hutang Bank','(Rp 15.000.000)',false]],'(Rp 15.000.000)',false)}
+    <div style="border-top:2px solid #e5e7eb;padding-top:16px;space-y:8px">
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #f1f5f9">
+        <span style="font-weight:600;color:#374151">Kenaikan Bersih Kas</span>
+        <span style="font-weight:700;color:#15803d">+ Rp 118.100.000</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #f1f5f9">
+        <span style="font-weight:600;color:#374151">Saldo Kas Awal</span>
+        <span style="font-weight:700">Rp 167.300.000</span>
+      </div>
+      <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <span style="font-weight:800;font-size:15px">💵 Saldo Kas Akhir (30 Nov 2024)</span>
+        <span style="font-size:24px;font-weight:900">Rp 285.400.000</span>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// QUOTATION FORM LOGIC
+// ═══════════════════════════════════════
+const prodData = [
+  {id:1,name:'Laptop ASUS VivoBook 15',price:2500000,unit:'Unit'},
+  {id:2,name:'Kursi Ergonomis Premium',price:1100000,unit:'Unit'},
+  {id:3,name:'Kertas A4 80gsm',price:18000,unit:'Pak'},
+  {id:4,name:'Monitor 27" IPS 144Hz',price:3800000,unit:'Unit'},
+  {id:5,name:'Printer Canon PIXMA',price:1150000,unit:'Unit'},
+  {id:6,name:'UPS APC 650VA',price:890000,unit:'Unit'},
+  {id:7,name:'Meja Standing Desk',price:2100000,unit:'Unit'},
+];
+
+function makeQItemRow(item) {
+  const opts = prodData.map(p=>`<option value="${p.id}" data-price="${p.price}" data-unit="${p.unit}">${p.name}</option>`).join('');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="padding:6px 10px"><select class="form-select" style="font-size:12px" onchange="onProdChange(this)"><option value="">-- Pilih --</option>${opts}</select></td>
+    <td style="padding:6px 10px"><input type="text" class="form-control" style="font-size:12px" placeholder="Keterangan..."></td>
+    <td style="padding:6px 10px"><input type="number" class="form-control" style="font-size:12px;text-align:center" value="1" min="1" oninput="calcQ()"></td>
+    <td style="padding:6px 10px"><input type="text" class="form-control" style="font-size:12px;text-align:center" value="" placeholder="Unit"></td>
+    <td style="padding:6px 10px"><input type="number" class="form-control" style="font-size:12px;text-align:right" value="0" oninput="calcQ()"></td>
+    <td style="padding:6px 10px"><input type="number" class="form-control" style="font-size:12px;text-align:center" value="0" min="0" max="100" oninput="calcQ()"></td>
+    <td style="padding:6px 10px;text-align:right;font-weight:700;font-size:12px;color:#2563eb">Rp 0</td>
+    <td style="padding:6px 10px"><button onclick="this.closest('tr').remove();calcQ()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;line-height:1">×</button></td>
+  `;
+  return tr;
+}
+
+function addQItem() {
+  document.getElementById('qItems').appendChild(makeQItemRow());
+}
+
+function onProdChange(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  const row = sel.closest('tr');
+  if(opt.dataset.price) {
+    row.querySelectorAll('input')[2].value = opt.dataset.price;
+    row.querySelectorAll('input')[1].value = opt.dataset.unit;
+  }
+  calcQ();
+}
+
+function calcQ() {
+  let sub = 0;
+  document.querySelectorAll('#qItems tr').forEach(tr=>{
+    const inputs = tr.querySelectorAll('input');
+    if(inputs.length < 4) return;
+    const qty = parseFloat(inputs[0].value)||0;
+    const price = parseFloat(inputs[2].value)||0;
+    const disc = parseFloat(inputs[3].value)||0;
+    const discAmt = qty*price*disc/100;
+    const total = qty*price - discAmt;
+    sub += total;
+    tr.cells[6].textContent = 'Rp '+total.toLocaleString('id-ID');
+  });
+  const disc = parseFloat(document.getElementById('qDisc').value)||0;
+  const tax = parseFloat(document.getElementById('qTax').value)||11;
+  const discAmt = sub*disc/100;
+  const taxAmt = (sub-discAmt)*tax/100;
+  const total = sub-discAmt+taxAmt;
+  document.getElementById('qSub').textContent = 'Rp '+sub.toLocaleString('id-ID');
+  document.getElementById('qDiscAmt').textContent = '- Rp '+discAmt.toLocaleString('id-ID');
+  document.getElementById('qTaxAmt').textContent = 'Rp '+taxAmt.toLocaleString('id-ID');
+  document.getElementById('qTotal').textContent = 'Rp '+total.toLocaleString('id-ID');
+  document.getElementById('qTerbilang').textContent = terbilang(Math.round(total))+' Rupiah';
+}
+
+// ═══════════════════════════════════════
+// JURNAL FORM
+// ═══════════════════════════════════════
+function addJLine() {
+  const tbody = document.getElementById('jLines');
+  const tr = document.createElement('tr');
+  const opts = ['1-0001 Kas Tunai','1-0002 Bank BCA','1-1001 Piutang Usaha','1-2001 Persediaan','2-0001 Hutang Usaha','4-0001 Penjualan','5-0001 HPP','6-0001 Biaya Gaji'].map(o=>`<option>${o}</option>`).join('');
+  tr.innerHTML = `
+    <td style="padding:8px 10px"><select class="form-select" style="font-size:12px">${opts}</select></td>
+    <td style="padding:8px 10px"><input type="text" class="form-control" style="font-size:12px" placeholder="..."></td>
+    <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+    <td style="padding:8px 10px"><input type="number" class="form-control" style="text-align:right;font-size:12px" placeholder="0" oninput="calcJurnal()"></td>
+    <td style="padding:8px 10px"><button onclick="removeJLine(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px">×</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function removeJLine(btn) {
+  const rows = document.querySelectorAll('#jLines tr');
+  if(rows.length > 1) { btn.closest('tr').remove(); calcJurnal(); }
+  else showNotif('warning','Peringatan','Minimal satu baris jurnal diperlukan');
+}
+
+function calcJurnal() {
+  let td=0, tk=0;
+  document.querySelectorAll('#jLines tr').forEach(tr=>{
+    const inputs = tr.querySelectorAll('input[type=number]');
+    td += parseFloat(inputs[0]?.value)||0;
+    tk += parseFloat(inputs[1]?.value)||0;
+  });
+  document.getElementById('jTD').textContent = 'Rp '+td.toLocaleString('id-ID');
+  document.getElementById('jTK').textContent = 'Rp '+tk.toLocaleString('id-ID');
+  const bal = document.getElementById('jBalance');
+  if(Math.abs(td-tk)<1) { bal.textContent='✓ BALANCE'; bal.style.color='#15803d'; }
+  else { bal.textContent=`⚠ TIDAK BALANCE (selisih: ${rp(Math.abs(td-tk))})`; bal.style.color='#dc2626'; }
+}
+
+// ═══════════════════════════════════════
+// ACTION HANDLERS
+// ═══════════════════════════════════════
+function convertQtoSO(no) {
+  const idx = D.quotations.findIndex(q=>q.no===no);
+  if(idx>-1) {
+    D.quotations[idx].status='converted';
+    const soNo = 'SO/2024/11/0021';
+    D.salesOrders.unshift({no:soNo,cust:D.quotations[idx].cust,date:'15/11/2024',quo:no,total:D.quotations[idx].total,status:'confirmed'});
+    renderTable('quoTable',D.quotations,renderQRow);
+    showNotif('success','Konversi Berhasil!',`${no} → ${soNo} berhasil dikonversi ke Sales Order`);
+  }
+}
+
+function saveQuo(status) {
+  const total = parseFloat(document.getElementById('qTotal').textContent.replace(/[^0-9]/g,''))||0;
+  const newNo = 'QUO/2024/11/0026';
+  D.quotations.unshift({no:newNo,cust:'PT. Teknologi Maju',date:'15/11/2024',valid:'15/12/2024',total,status});
+  closeModal('modalQuo');
+  renderTable('quoTable',D.quotations,renderQRow);
+  showNotif('success','Quotation Tersimpan!',`${newNo} berhasil dibuat dengan status ${status==='draft'?'Draft':'Terkirim'}`);
+}
+
+function savePO() {
+  closeModal('modalPO');
+  const newNo = 'PO/2024/11/0013';
+  D.purchaseOrders.unshift({no:newNo,supp:'PT. Asus Indonesia',date:'15/11/2024',exp:'22/11/2024',total:23310000,status:'sent'});
+  if(currentPage==='purchaseorder') renderTable('poTable',D.purchaseOrders,renderPORow);
+  showNotif('success','PO Berhasil Dibuat!',`${newNo} telah dikirim ke PT. Asus Indonesia`);
+}
+
+function saveKas(type) {
+  closeModal(type==='masuk'?'modalKasMasuk':'modalKasKeluar');
+  const amount = type==='masuk'?22100000:12500000;
+  D.kasTransactions.unshift({
+    date:'15/11/2024',
+    desc:type==='masuk'?'Penerimaan Piutang INV/2024/11/0040':'Pembayaran PO/2024/11/0012',
+    akun:type==='masuk'?'Bank Mandiri':'Bank BCA',
+    type,amount,
+    saldo:type==='masuk'?107100000:172900000
+  });
+  if(currentPage==='kas') renderKas();
+  showNotif('success',type==='masuk'?'Kas Masuk Dicatat!':'Kas Keluar Dicatat!',
+    `${type==='masuk'?'Penerimaan':'Pengeluaran'} ${rp(amount)} berhasil dicatat`);
+}
+
+function saveJurnal() {
+  const td = parseFloat(document.getElementById('jTD').textContent.replace(/[^0-9]/g,''))||0;
+  const tk = parseFloat(document.getElementById('jTK').textContent.replace(/[^0-9]/g,''))||0;
+  if(Math.abs(td-tk)>1) { showNotif('error','Jurnal Tidak Balance!','Total debit harus sama dengan total kredit'); return; }
+  const newNo = 'JRN/2024/11/0090';
+  D.journals.unshift({no:newNo,date:'15/11/2024',desc:'Jurnal Manual',ref:'Manual',debit:td,credit:tk,status:'posted'});
+  closeModal('modalJurnal');
+  if(currentPage==='jurnal') renderTable('jurnalTable',D.journals,renderJurnalRow);
+  showNotif('success','Jurnal Diposting!',`${newNo} berhasil diposting ke buku besar`);
+}
+
+// ═══════════════════════════════════════
+// TERBILANG
+// ═══════════════════════════════════════
+function terbilang(n) {
+  if(n===0) return 'Nol';
+  const s=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
+  const t = n=>{
+    if(n<12) return s[n];
+    if(n<20) return s[n-10]+' belas';
+    if(n<100) return s[Math.floor(n/10)]+' puluh'+(n%10?' '+s[n%10]:'');
+    if(n<200) return 'seratus'+(n-100?' '+t(n-100):'');
+    if(n<1000) return s[Math.floor(n/100)]+' ratus'+(n%100?' '+t(n%100):'');
+    if(n<2000) return 'seribu'+(n-1000?' '+t(n-1000):'');
+    if(n<1e6) return t(Math.floor(n/1e3))+' ribu'+(n%1e3?' '+t(n%1e3):'');
+    if(n<1e9) return t(Math.floor(n/1e6))+' juta'+(n%1e6?' '+t(n%1e6):'');
+    return t(Math.floor(n/1e9))+' miliar'+(n%1e9?' '+t(n%1e9):'');
+  };
+  return t(n).trim().replace(/\b\w/g,c=>c.toUpperCase());
+}
+
+// ═══════════════════════════════════════
+// GLOBAL SEARCH
+// ═══════════════════════════════════════
+function globalSearchFn() {
+  const q = document.getElementById('globalSearch').value.toLowerCase();
+  if(!q) return;
+  const results = [
+    ...D.quotations.filter(x=>x.no.toLowerCase().includes(q)||x.cust.toLowerCase().includes(q)).map(x=>({type:'Quotation',no:x.no,page:'quotation'})),
+    ...D.invoices.filter(x=>x.no.toLowerCase().includes(q)||x.cust.toLowerCase().includes(q)).map(x=>({type:'Invoice',no:x.no,page:'invoicesales'})),
+    ...D.purchaseOrders.filter(x=>x.no.toLowerCase().includes(q)||x.supp.toLowerCase().includes(q)).map(x=>({type:'PO',no:x.no,page:'purchaseorder'})),
+  ];
+  if(results.length) showNotif('info','Search: '+q,results.slice(0,3).map(r=>`${r.type}: ${r.no}`).join(' | '));
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(u==='admin' && p==='admin123') {
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').style.display='block';
+    initCharts();
+    renderDashboard();
+    showNotif('success','Login Berhasil! 🎉','Selamat datang, Administrator');
+  } else {
+    showNotif('error','Login Gagal','Username atau password salah!');
+    document.getElementById('loginPass').style.borderColor='#ef4444';
+    setTimeout(()=>document.getElementById('loginPass').style.borderColor='',2000);
+  }
+}
+
+function doLogout() {
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  showNotif('info','Logout Berhasil','Sampai jumpa kembali!');
+}
+
+function togglePass() {
+  const inp = document.getElementById('loginPass');
+  inp.type = inp.type==='password'?'text':'password';
+}
+
+// ═══════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════
+let chart1, chart2;
+function initCharts() {
+  if(chart1) chart1.destroy();
+  if(chart2) chart2.destroy();
+  const c1 = document.getElementById('chartSales').getContext('2d');
+  chart1 = new Chart(c1,{
+    type:'bar',
+    data:{
+      labels:['Jun','Jul','Ags','Sep','Okt','Nov'],
+      datasets:[
+        {label:'Penjualan (Jt)',data:[380,420,395,480,458,542],backgroundColor:'rgba(59,130,246,.85)',borderRadius:8,borderSkipped:false},
+        {label:'Pembelian (Jt)',data:[245,280,260,320,295,365],backgroundColor:'rgba(239,68,68,.7)',borderRadius:8,borderSkipped:false},
+        {label:'Laba (Jt)',data:[135,140,135,160,163,177],backgroundColor:'rgba(34,197,94,.8)',borderRadius:8,borderSkipped:false,type:'line',fill:false,tension:.4,pointRadius:4,borderWidth:2},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:12,padding:12}}},
+      scales:{
+        y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:11},callback:v=>v+'jt'}},
+        x:{grid:{display:false},ticks:{font:{size:11}}}
+      }
+    }
+  });
+
+  const c2 = document.getElementById('chartPie').getContext('2d');
+  chart2 = new Chart(c2,{
+    type:'doughnut',
+    data:{
+      labels:['Elektronik','Furniture','Alat Tulis','Lainnya'],
+      datasets:[{data:[42,28,18,12],backgroundColor:['#3b82f6','#22c55e','#f97316','#a855f7'],borderWidth:3,borderColor:'#fff',hoverOffset:10}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      cutout:'72%'
+    }
+  });
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load', ()=>{
+  // Init quotation form with 1 row
+  addQItem();
+  // Set date
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+});
+</script>
+</body>
+</html>
