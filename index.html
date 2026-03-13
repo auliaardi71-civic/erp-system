@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏢 ERP System - PT. APNA</title>
+<title>🏢 ERP System - PT. AMANAH PUTRA9</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -693,6 +693,59 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 <!-- MODALS -->
 <!-- ═══════════════════════════════════════ -->
 
+<!-- MODAL TAMBAH PRODUK -->
+<div class="modal-overlay" id="modalProduct">
+<div class="modal" style="max-width:500px">
+  <div style="padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;border-radius:20px 20px 0 0">
+    <div style="font-weight:800;font-size:16px">🏷️ Tambah Produk Baru</div>
+    <button onclick="closeModal('modalProduct')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
+  </div>
+  <div style="padding:22px">
+    <div class="form-group">
+      <label class="form-label">Kode Produk</label>
+      <input type="text" id="pCode" class="form-control" placeholder="Contoh: ELK-005">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nama Produk</label>
+      <input type="text" id="pName" class="form-control" placeholder="Masukkan nama barang...">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select id="pCat" class="form-select">
+          <option>Elektronik</option>
+          <option>Furniture</option>
+          <option>Alat Tulis</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Satuan</label>
+        <input type="text" id="pUnit" class="form-control" value="Unit">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Harga Beli (Modal)</label>
+        <input type="number" id="pBuy" class="form-control" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Harga Jual</label>
+        <input type="number" id="pSell" class="form-control" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Stok Awal</label>
+      <input type="number" id="pStock" class="form-control" value="0">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9">
+      <button onclick="closeModal('modalProduct')" class="btn btn-outline" style="flex:1">Batal</button>
+      <button onclick="saveProduct()" class="btn btn-primary" style="flex:2">💾 Simpan Produk</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- MODAL QUOTATION -->
 <div class="modal-overlay" id="modalQuo">
 <div class="modal" style="max-width:900px">
@@ -1174,6 +1227,7 @@ const badges = {
   shipped:'<span class="badge badge-info">🚚 Dikirim</span>',
   delivered:'<span class="badge badge-success">✅ Terkirim</span>',
   posted:'<span class="badge badge-success">✓ Posted</span>',
+  active:'<span class="badge badge-success">Aktif</span>',
   normal:'<span class="badge badge-success">Normal</span>',
   low:'<span class="badge badge-warning">⚠ Menipis</span>',
   out:'<span class="badge badge-danger">🔴 Habis</span>',
@@ -1425,7 +1479,7 @@ function renderProdRow(p) {
     <td style="text-align:right;color:#6b7280">${rp(p.buy)}</td>
     <td style="text-align:right;font-weight:700;color:#2563eb">${rp(p.sell)}</td>
     <td style="text-align:center;font-weight:800;font-size:16px;color:${sColor}">${p.stock}</td>
-    <td style="text-align:center"><span class="badge badge-success">Aktif</span></td>
+    <td style="text-align:center">${badges[p.status]}</td>
   </tr>`;
 }
 
@@ -1822,6 +1876,46 @@ function calcJurnal() {
 // ═══════════════════════════════════════
 // ACTION HANDLERS
 // ═══════════════════════════════════════
+
+// --- FUNGSI TAMBAH PRODUK BARU ---
+function saveProduct() {
+  const code = document.getElementById('pCode').value || 'PRD-NEW';
+  const name = document.getElementById('pName').value || 'Produk Tanpa Nama';
+  const cat = document.getElementById('pCat').value;
+  const unit = document.getElementById('pUnit').value || 'Pcs';
+  const buy = parseFloat(document.getElementById('pBuy').value) || 0;
+  const sell = parseFloat(document.getElementById('pSell').value) || 0;
+  const stock = parseInt(document.getElementById('pStock').value) || 0;
+
+  // Masukkan data ke array produk
+  D.products.unshift({
+    code: code,
+    name: name,
+    cat: cat,
+    unit: unit,
+    buy: buy,
+    sell: sell,
+    stock: stock,
+    status: 'active'
+  });
+
+  // Tutup Modal
+  closeModal('modalProduct');
+  
+  // Render ulang tabel jika sedang di halaman produk
+  if(currentPage === 'products') renderTable('prodTable', D.products, renderProdRow);
+
+  // Tampilkan notifikasi
+  showNotif('success', 'Produk Ditambahkan', `${name} berhasil masuk ke Master Data!`);
+
+  // Reset form
+  document.getElementById('pCode').value = '';
+  document.getElementById('pName').value = '';
+  document.getElementById('pBuy').value = '';
+  document.getElementById('pSell').value = '';
+  document.getElementById('pStock').value = '0';
+}
+
 function convertQtoSO(no) {
   const idx = D.quotations.findIndex(q=>q.no===no);
   if(idx>-1) {
