@@ -1,2 +1,2 @@
 # erp-system
-Sistem ERP PT. Maju Jaya Abadi
+Sistem ERP PT. Amanah Putra Nusantara
