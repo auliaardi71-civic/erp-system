@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏢 ERP System - PT. Amanah Putra Nusantara</title>
+<title>🏢 ERP System - PT. Maju Jaya Abadi</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -35,7 +35,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;overflow-x:h
 .btn-success{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 2px 8px rgba(34,197,94,.3)}
 .btn-success:hover{background:linear-gradient(135deg,#16a34a,#15803d)}
 .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 2px 8px rgba(239,68,68,.3)}
-.btn-danger:hover{background:linear-gradient(135deg,#dc2626,#b91c1c)}
 .btn-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
 .btn-outline{background:#fff;color:#374151;border:1.5px solid #e5e7eb}
 .btn-outline:hover{background:#f9fafb}
@@ -52,7 +51,6 @@ tbody td{padding:11px 14px;font-size:13px;color:#374151}
 .badge-info{background:#dbeafe;color:#1d4ed8}
 .badge-purple{background:#ede9fe;color:#7c3aed}
 .badge-gray{background:#f3f4f6;color:#6b7280}
-.badge-orange{background:#ffedd5;color:#c2410c}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center;padding:16px;backdrop-filter:blur(4px)}
 .modal-overlay.show{display:flex}
 .modal{background:#fff;border-radius:20px;max-height:92vh;overflow-y:auto;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:modalIn .3s ease}
@@ -70,23 +68,17 @@ tbody td{padding:11px 14px;font-size:13px;color:#374151}
 .progress-fill{height:100%;border-radius:3px;transition:width .8s ease}
 .stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f9fafb}
 .stat-row:last-child{border-bottom:none}
-input[type=number]::-webkit-inner-spin-button{opacity:.5}
 .search-box{display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:10px;padding:7px 12px;flex:1;max-width:320px}
 .search-box input{border:none;background:transparent;outline:none;font-size:13px;color:#374151;width:100%}
 .sidebar-logo{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:12px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0}
 .sidebar-collapsed-hide{transition:opacity .2s,width .3s}
 .collapsed .sidebar-collapsed-hide{opacity:0;width:0;overflow:hidden;white-space:nowrap}
-.invoice-preview{background:#fff;padding:32px;max-width:700px;margin:0 auto}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:#f1f5f9}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
 .filter-bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px;background:#f8fafc;border-bottom:1px solid #f1f5f9}
-.items-table tbody tr:nth-child(even){background:#fafbff}
-.total-box{background:linear-gradient(135deg,#f0f7ff,#e8f2ff);border:1.5px solid #bfdbfe;border-radius:14px;padding:16px}
-@media(max-width:768px){.sidebar{width:260px;transform:translateX(-100%)}.sidebar.mobile-open{transform:translateX(0)}.main{margin-left:0}}
 .chart-container{position:relative;height:220px}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
 .trend-up{color:#16a34a;font-size:11px;font-weight:600}
 .trend-down{color:#dc2626;font-size:11px;font-weight:600}
 </style>
@@ -202,7 +194,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 
 <!-- MAIN CONTENT -->
 <div class="main" id="main">
-
   <!-- TOPBAR -->
   <div class="topbar">
     <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;color:#6b7280;font-size:20px;padding:4px 6px;border-radius:8px">☰</button>
@@ -211,11 +202,9 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
       <input type="text" placeholder="Cari transaksi, produk, pelanggan..." id="globalSearch" oninput="globalSearchFn()">
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-      <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;padding:6px 12px;border-radius:12px;cursor:pointer;border:1px solid #e5e7eb">
+      <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;padding:6px 12px;border-radius:12px;border:1px solid #e5e7eb">
         <div class="avatar" style="width:30px;height:30px;font-size:12px">A</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#111827">Administrator</div>
-        </div>
+        <div><div style="font-size:13px;font-weight:700;color:#111827">Administrator</div></div>
       </div>
     </div>
   </div>
@@ -388,7 +377,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
       <button class="btn btn-danger" onclick="openModal('modalKasKeluar')">💸 Kas Keluar</button>
     </div>
   </div>
-  <div id="kasCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px"></div>
   <div class="card" style="overflow:hidden">
     <table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Akun</th><th style="text-align:center">Jenis</th><th style="text-align:right">Jumlah</th><th style="text-align:right">Saldo</th></tr></thead><tbody id="kasTable"></tbody></table>
   </div>
@@ -445,43 +433,17 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
     <button onclick="closeModal('modalProduct')" style="width:30px;height:30px;border-radius:8px;border:none;background:#f3f4f6;cursor:pointer;font-size:16px">×</button>
   </div>
   <div style="padding:22px">
-    <div class="form-group">
-      <label class="form-label">Kode Produk</label>
-      <input type="text" id="pCode" class="form-control" placeholder="Contoh: ELK-005">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Nama Produk</label>
-      <input type="text" id="pName" class="form-control" placeholder="Masukkan nama barang...">
+    <div class="form-group"><label class="form-label">Kode Produk</label><input type="text" id="pCode" class="form-control" placeholder="Contoh: ELK-005"></div>
+    <div class="form-group"><label class="form-label">Nama Produk</label><input type="text" id="pName" class="form-control" placeholder="Masukkan nama barang..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Kategori</label><select id="pCat" class="form-select"><option>Elektronik</option><option>Furniture</option><option>Alat Tulis</option><option>Lainnya</option></select></div>
+      <div class="form-group"><label class="form-label">Satuan</label><input type="text" id="pUnit" class="form-control" value="Unit"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group">
-        <label class="form-label">Kategori</label>
-        <select id="pCat" class="form-select">
-          <option>Elektronik</option>
-          <option>Furniture</option>
-          <option>Alat Tulis</option>
-          <option>Lainnya</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Satuan</label>
-        <input type="text" id="pUnit" class="form-control" value="Unit">
-      </div>
+      <div class="form-group"><label class="form-label">Harga Beli (Modal)</label><input type="number" id="pBuy" class="form-control" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Harga Jual</label><input type="number" id="pSell" class="form-control" placeholder="0"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group">
-        <label class="form-label">Harga Beli (Modal)</label>
-        <input type="number" id="pBuy" class="form-control" placeholder="0">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Harga Jual</label>
-        <input type="number" id="pSell" class="form-control" placeholder="0">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Stok Awal</label>
-      <input type="number" id="pStock" class="form-control" value="0">
-    </div>
+    <div class="form-group"><label class="form-label">Stok Awal</label><input type="number" id="pStock" class="form-control" value="0"></div>
     <div style="display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9">
       <button onclick="closeModal('modalProduct')" class="btn btn-outline" style="flex:1">Batal</button>
       <button onclick="saveProduct()" class="btn btn-primary" style="flex:2">💾 Simpan Produk</button>
@@ -642,18 +604,21 @@ const D = {
     {no:'PINV/2024/11/0021',supp:'PT. Asus Indonesia',date:'08/11/2024',due:'08/12/2024',total:125000000,sisa:0,status:'paid'}
   ],
   products: [
-    {code:'ELK-001',name:'Laptop ASUS VivoBook',cat:'Elektronik',unit:'Unit',buy:2100000,sell:2500000,stock:25,status:'active'},
-    {code:'FRN-001',name:'Kursi Ergonomis',cat:'Furniture',unit:'Unit',buy:780000,sell:1100000,stock:0,status:'active'}
+    {code:'ELK-001',name:'Laptop ASUS VivoBook 15',cat:'Elektronik',unit:'Unit',buy:2100000,sell:2500000,stock:25,status:'active'},
+    {code:'ELK-002',name:'Monitor 27" IPS 144Hz',cat:'Elektronik',unit:'Unit',buy:3200000,sell:3800000,stock:3,status:'active'},
+    {code:'FRN-001',name:'Kursi Ergonomis Premium',cat:'Furniture',unit:'Unit',buy:780000,sell:1100000,stock:0,status:'active'}
   ],
   stocks: [
-    {code:'ELK-001',name:'Laptop ASUS VivoBook',cat:'Elektronik',stock:25,min:5,avgcost:2100000,status:'normal'},
-    {code:'FRN-001',name:'Kursi Ergonomis',cat:'Furniture',stock:0,min:10,avgcost:780000,status:'out'}
+    {code:'ELK-001',name:'Laptop ASUS VivoBook 15',cat:'Elektronik',stock:25,min:5,avgcost:2100000,status:'normal'},
+    {code:'ELK-002',name:'Monitor 27" IPS 144Hz',cat:'Elektronik',stock:3,min:5,avgcost:3200000,status:'low'},
+    {code:'FRN-001',name:'Kursi Ergonomis Premium',cat:'Furniture',stock:0,min:10,avgcost:780000,status:'out'}
   ],
   movements: [
     {date:'15/11/2024',prod:'Laptop ASUS',ref:'DO/2024/11/0016',type:'out',qty:5,before:30,after:25,nilai:10500000}
   ],
   kasTransactions: [
-    {date:'15/11/2024',desc:'Penerimaan INV',akun:'Bank BCA',type:'in',amount:41347500,saldo:185400000}
+    {date:'15/11/2024',desc:'Penerimaan INV',akun:'Bank BCA',type:'in',amount:41347500,saldo:185400000},
+    {date:'12/11/2024',desc:'Bayar Listrik',akun:'Kas Operasional',type:'out',amount:2500000,saldo:15200000}
   ],
   journals: [
     {no:'JRN/2024/11/0089',date:'15/11/2024',desc:'Penerimaan INV',ref:'Payment',debit:41347500,credit:41347500,status:'posted'}
@@ -664,11 +629,6 @@ const D = {
 // UTILS
 // ═══════════════════════════════════════
 const rp = n => 'Rp '+Number(n).toLocaleString('id-ID');
-const rpS = n => {
-  if(n>=1e9) return 'Rp '+(n/1e9).toFixed(1)+' M';
-  if(n>=1e6) return 'Rp '+(n/1e6).toFixed(1)+' Jt';
-  return 'Rp '+Number(n).toLocaleString('id-ID');
-};
 const badges = {
   draft:'<span class="badge badge-gray">Draft</span>',
   sent:'<span class="badge badge-info">Terkirim</span>',
@@ -746,12 +706,15 @@ function renderPage(p) {
     purchaseorder:()=>renderTable('poTable',D.purchaseOrders,p=>`<tr><td>${p.no}</td><td>${p.supp}</td><td>${p.date}</td><td>${p.exp}</td><td style="text-align:right">${rp(p.total)}</td><td style="text-align:center">${badges[p.status]||p.status}</td><td style="text-align:center">-</td></tr>`),
     goodsreceipt:()=>renderTable('grTable',D.goodsReceipts,g=>`<tr><td>${g.no}</td><td>${g.po}</td><td>${g.supp}</td><td>${g.date}</td><td>${g.gudang}</td><td>${g.dok}</td><td style="text-align:center">${badges[g.status]||g.status}</td></tr>`),
     invoicepurchase:()=>renderTable('pinvTable',D.purchaseInvoices,p=>`<tr><td>${p.no}</td><td>${p.supp}</td><td>${p.date}</td><td>${p.due}</td><td style="text-align:right">${rp(p.total)}</td><td style="text-align:right">${rp(p.sisa)}</td><td style="text-align:center">${badges[p.status]||p.status}</td><td style="text-align:center">-</td></tr>`),
-    products:()=>renderTable('prodTable',D.products,p=>`<tr><td>${p.code}</td><td>${p.name}</td><td>${p.cat}</td><td style="text-align:center">${p.unit}</td><td style="text-align:right">${rp(p.buy)}</td><td style="text-align:right;color:#2563eb;font-weight:bold">${rp(p.sell)}</td><td style="text-align:center;font-weight:bold">${p.stock}</td><td style="text-align:center">${badges[p.status]}</td></tr>`),
-    stock:()=>renderTable('stockTable',D.stocks,s=>`<tr><td>${s.code}</td><td>${s.name}</td><td>${s.cat}</td><td style="text-align:center;font-weight:bold">${s.stock}</td><td style="text-align:center">${s.min}</td><td style="text-align:right">${rp(s.avgcost)}</td><td style="text-align:right;color:#2563eb;font-weight:bold">${rp(s.stock*s.avgcost)}</td><td style="text-align:center">${badges[s.status]}</td></tr>`),
+    products:()=>renderTable('prodTable',D.products,p=>`<tr><td><span style="font-family:monospace;font-size:12px;color:#6b7280">${p.code}</span></td><td style="font-weight:600">${p.name}</td><td>${p.cat}</td><td style="text-align:center">${p.unit}</td><td style="text-align:right">${rp(p.buy)}</td><td style="text-align:right;color:#2563eb;font-weight:bold">${rp(p.sell)}</td><td style="text-align:center;font-weight:bold">${p.stock}</td><td style="text-align:center">${badges[p.status]}</td></tr>`),
+    stock:()=>renderTable('stockTable',D.stocks,s=>`<tr><td><span style="font-family:monospace;font-size:12px;color:#6b7280">${s.code}</span></td><td style="font-weight:600">${s.name}</td><td>${s.cat}</td><td style="text-align:center;font-size:16px;font-weight:900;color:${s.status==='out'?'#dc2626':s.status==='low'?'#b45309':'#111827'}">${s.stock}</td><td style="text-align:center">${s.min}</td><td style="text-align:right">${rp(s.avgcost)}</td><td style="text-align:right;color:#2563eb;font-weight:bold">${rp(s.stock*s.avgcost)}</td><td style="text-align:center">${badges[s.status]}</td></tr>`),
     stockmovement:()=>renderTable('movTable',D.movements,m=>`<tr><td>${m.date}</td><td>${m.prod}</td><td>${m.ref}</td><td style="text-align:center">${m.type}</td><td style="text-align:center">${m.qty}</td><td style="text-align:right">${m.before}</td><td style="text-align:right">${m.after}</td><td style="text-align:right">${rp(m.nilai)}</td></tr>`),
-    kas:()=>renderTable('kasTable',D.kasTransactions,t=>`<tr><td>${t.date}</td><td>${t.desc}</td><td>${t.akun}</td><td style="text-align:center">${t.type}</td><td style="text-align:right">${rp(t.amount)}</td><td style="text-align:right">${rp(t.saldo)}</td></tr>`),
-    jurnal:()=>renderTable('jurnalTable',D.journals,j=>`<tr><td>${j.no}</td><td>${j.date}</td><td>${j.desc}</td><td>${j.ref}</td><td style="text-align:right">${rp(j.debit)}</td><td style="text-align:right">${rp(j.credit)}</td><td style="text-align:center">${badges[j.status]||j.status}</td></tr>`),
-    dashboard: renderDashboard
+    kas:()=>renderTable('kasTable',D.kasTransactions,t=>`<tr><td>${t.date}</td><td>${t.desc}</td><td>${t.akun}</td><td style="text-align:center"><span class="badge ${t.type==='in'?'badge-success':'badge-danger'}">${t.type==='in'?'MASUK':'KELUAR'}</span></td><td style="text-align:right;font-weight:bold;color:${t.type==='in'?'#15803d':'#dc2626'}">${rp(t.amount)}</td><td style="text-align:right;font-weight:bold">${rp(t.saldo)}</td></tr>`),
+    jurnal:()=>renderTable('jurnalTable',D.journals,j=>`<tr><td>${j.no}</td><td>${j.date}</td><td>${j.desc}</td><td>${j.ref}</td><td style="text-align:right;color:#2563eb;font-weight:bold">${rp(j.debit)}</td><td style="text-align:right;color:#7c3aed;font-weight:bold">${rp(j.credit)}</td><td style="text-align:center">${badges[j.status]||j.status}</td></tr>`),
+    dashboard: renderDashboard,
+    neraca: renderNeraca,
+    labarugi: renderLabaRugi,
+    aruskas: renderArusKas
   };
   if(r[p]) r[p]();
 }
@@ -764,36 +727,100 @@ function renderDashboard() {
 }
 
 // ═══════════════════════════════════════
+// LAPORAN KEUANGAN (NERACA, LABA RUGI, ARUS KAS)
+// ═══════════════════════════════════════
+function renderNeraca() {
+  const sec = (title,items,total,color)=>`
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;color:${color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${title}</div>
+      ${items.map(([n,v])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280">${n}</span><span style="font-size:13px;font-weight:600">${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:2px solid #e5e7eb;margin-top:4px">
+        <span style="font-weight:700;font-size:12px">Total</span>
+        <span style="font-weight:800;font-size:13px;color:${color}">${total}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('neracaContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div>
+      <div style="font-weight:700;color:#6b7280;margin-top:4px">NERACA / BALANCE SHEET</div>
+      <div style="font-size:13px;color:#9ca3af;margin-top:2px">Per 30 November 2024</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+      <div>
+        <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;padding:10px 14px;border-radius:10px;font-weight:800;margin-bottom:14px">AKTIVA (ASET)</div>
+        ${sec('Aktiva Lancar',[['Kas Tunai','Rp 15.200.000'],['Bank BCA','Rp 185.400.000'],['Bank Mandiri','Rp 84.800.000'],['Piutang Usaha','Rp 125.800.000'],['Persediaan Barang','Rp 98.385.000']],'Rp 509.585.000','#2563eb')}
+        ${sec('Aktiva Tetap',[['Kendaraan','Rp 250.000.000'],['Peralatan Kantor','Rp 85.000.000'],['Ak. Penyusutan','(Rp 40.000.000)']],'Rp 295.000.000','#7c3aed')}
+        <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;margin-top:4px"><span>TOTAL AKTIVA</span><span>Rp 804.585.000</span></div>
+      </div>
+      <div>
+        <div style="background:linear-gradient(135deg,#374151,#1f2937);color:#fff;padding:10px 14px;border-radius:10px;font-weight:800;margin-bottom:14px">PASIVA (LIABILITAS & EKUITAS)</div>
+        ${sec('Kewajiban Lancar',[['Hutang Usaha','Rp 89.200.000'],['Hutang Pajak','Rp 12.500.000'],['Hutang Gaji','Rp 15.000.000']],'Rp 116.700.000','#dc2626')}
+        ${sec('Kewajiban Jangka Panjang',[['Hutang Bank','Rp 150.000.000']],'Rp 150.000.000','#b45309')}
+        ${sec('Ekuitas',[['Modal Disetor','Rp 400.000.000'],['Laba Ditahan','Rp 95.685.000'],['Laba Berjalan','Rp 42.200.000']],'Rp 537.885.000','#15803d')}
+        <div style="background:linear-gradient(135deg,#374151,#1f2937);color:#fff;padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;margin-top:4px"><span>TOTAL PASIVA</span><span>Rp 804.585.000</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderLabaRugi() {
+  const sec = (emoji,title,color,bg,items,total,sign='') => `
+    <div style="margin-bottom:18px">
+      <div style="background:${bg};padding:10px 14px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between"><span style="font-weight:800;color:${color}">${emoji} ${title}</span></div>
+      ${items.map(([n,v])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280;padding-left:4px">${n}</span><span style="font-size:13px;font-weight:600;color:${color}">${sign}${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-top:2px solid #e5e7eb;margin-top:4px"><span style="font-weight:700">Total ${title}</span><span style="font-weight:800;font-size:14px;color:${color}">${sign}${total}</span></div>
+    </div>
+  `;
+  document.getElementById('labarugiContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px"><div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div><div style="font-weight:700;color:#6b7280;margin-top:4px">LAPORAN LABA RUGI</div></div>
+    ${sec('📦','PENDAPATAN','#15803d','#f0fdf4',[['Penjualan Elektronik','Rp 231.100.000'],['Penjualan Furniture','Rp 195.000.000'],['Penjualan Alat Tulis','Rp 116.500.000']],'Rp 542.600.000')}
+    ${sec('🔻','HARGA POKOK PENJUALAN','#dc2626','#fef2f2',[['HPP Elektronik','Rp 154.100.000'],['HPP Furniture','Rp 128.700.000'],['HPP Alat Tulis','Rp 82.500.000']],'Rp 365.300.000','(')}
+    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #86efac;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><span style="font-weight:800;font-size:15px;color:#166534">LABA KOTOR</span><span style="font-size:22px;font-weight:900;color:#15803d">Rp 177.300.000</span></div>
+    ${sec('💸','BIAYA OPERASIONAL','#b45309','#fffbeb',[['Gaji & Tunjangan','Rp 75.000.000'],['Sewa Kantor','Rp 25.000.000'],['Listrik & Air','Rp 8.500.000'],['Pemasaran','Rp 12.600.000']],'Rp 121.100.000','(')}
+    <div style="background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;border-radius:14px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:20px"><div><div style="font-size:18px;font-weight:900">🎉 LABA BERSIH</div><div style="font-size:12px;opacity:0.8">Net Margin: 7.8%</div></div><div style="font-size:28px;font-weight:900">Rp 42.200.000</div></div>
+  `;
+}
+
+function renderArusKas() {
+  const sec = (roman,title,color,bg,rows,net,pos)=>`
+    <div style="margin-bottom:20px">
+      <div style="background:${bg};padding:10px 14px;border-radius:10px;margin-bottom:10px"><span style="font-weight:800;color:${color}">${roman}. ${title}</span></div>
+      ${rows.map(([n,v,isIn])=>`<div class="stat-row"><span style="font-size:13px;color:#6b7280;padding-left:4px">${n}</span><span style="font-size:13px;font-weight:600;color:${isIn?'#15803d':'#dc2626'}">${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:8px 4px;border-top:2px solid #e5e7eb;margin-top:4px"><span style="font-weight:700;font-size:13px">Net ${title}</span><span style="font-weight:800;color:${pos?'#15803d':'#dc2626'};font-size:14px">${net}</span></div>
+    </div>
+  `;
+  document.getElementById('aruskasContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:24px"><div style="font-size:20px;font-weight:900;color:#111827">PT. MAJU JAYA ABADI</div><div style="font-weight:700;color:#6b7280;margin-top:4px">LAPORAN ARUS KAS</div></div>
+    <div style="background:#f8fafc;border-radius:12px;padding:14px;display:flex;justify-content:space-between;margin-bottom:20px;border:1px solid #e5e7eb"><span style="font-weight:700;color:#374151">💰 Saldo Awal (1 Nov 2024)</span><span style="font-weight:900;font-size:16px;color:#111827">Rp 167.300.000</span></div>
+    ${sec('I','Aktivitas Operasi','#1d4ed8','#eff6ff',[['Penerimaan Pelanggan','+ Rp 485.200.000',true],['Pendapatan Bunga','+ Rp 1.500.000',true],['Pembayaran Supplier','(Rp 182.500.000)',false],['Gaji & Operasional','(Rp 126.100.000)',false]],'+ Rp 178.100.000',true)}
+    ${sec('II','Aktivitas Investasi','#7c3aed','#f5f3ff',[['Beli Kendaraan Operasional','(Rp 45.000.000)',false]],'(Rp 45.000.000)',false)}
+    ${sec('III','Aktivitas Pendanaan','#b45309','#fffbeb',[['Cicilan Bank','(Rp 15.000.000)',false]],'(Rp 15.000.000)',false)}
+    <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:20px"><span style="font-weight:800;font-size:15px">💵 Saldo Akhir Kas (30 Nov)</span><span style="font-size:24px;font-weight:900">Rp 285.400.000</span></div>
+  `;
+}
+
+// ═══════════════════════════════════════
 // ACTION HANDLERS
 // ═══════════════════════════════════════
 
 // --- FUNGSI TAMBAH PRODUK BARU ---
 function saveProduct() {
-  // 1. Ambil nilai dari form
   const code = document.getElementById('pCode').value || 'PRD-NEW';
-  const name = document.getElementById('pName').value || 'Produk Tanpa Nama';
+  const name = document.getElementById('pName').value || 'Produk Baru';
   const cat = document.getElementById('pCat').value;
   const unit = document.getElementById('pUnit').value || 'Pcs';
   const buy = parseFloat(document.getElementById('pBuy').value) || 0;
   const sell = parseFloat(document.getElementById('pSell').value) || 0;
   const stock = parseInt(document.getElementById('pStock').value) || 0;
 
-  // 2. Masukkan ke array D.products dan D.stocks
-  D.products.unshift({
-    code: code, name: name, cat: cat, unit: unit, buy: buy, sell: sell, stock: stock, status: 'active'
-  });
-  D.stocks.unshift({
-    code: code, name: name, cat: cat, stock: stock, min: 5, avgcost: buy, status: stock > 0 ? 'normal' : 'out'
-  });
+  D.products.unshift({ code, name, cat, unit, buy, sell, stock, status: 'active' });
+  D.stocks.unshift({ code, name, cat, stock, min: 5, avgcost: buy, status: stock > 0 ? 'normal' : 'out' });
 
-  // 3. Tutup Modal & Update Tabel
   closeModal('modalProduct');
   if(currentPage === 'products') renderPage('products');
+  showNotif('success', 'Produk Ditambahkan', `${name} masuk ke Master Data!`);
 
-  // 4. Notifikasi
-  showNotif('success', 'Produk Ditambahkan', `${name} berhasil masuk ke Master Data!`);
-
-  // 5. Kosongkan form
   document.getElementById('pCode').value = '';
   document.getElementById('pName').value = '';
   document.getElementById('pBuy').value = '';
@@ -858,11 +885,11 @@ function togglePass() {
 function initCharts() {
   new Chart(document.getElementById('chartSales').getContext('2d'),{
     type:'bar',
-    data:{labels:['Jun','Jul','Ags','Sep','Okt','Nov'],datasets:[{label:'Penjualan',data:[380,420,395,480,458,542],backgroundColor:'#3b82f6'}]}
+    data:{labels:['Jun','Jul','Ags','Sep','Okt','Nov'],datasets:[{label:'Penjualan',data:[380,420,395,480,458,542],backgroundColor:'#3b82f6'},{label:'Pembelian',data:[245,280,260,320,295,365],backgroundColor:'#ef4444'}]}
   });
   new Chart(document.getElementById('chartPie').getContext('2d'),{
     type:'doughnut',
-    data:{labels:['Elektronik','Furniture'],datasets:[{data:[60,40],backgroundColor:['#3b82f6','#22c55e']}]}
+    data:{labels:['Elektronik','Furniture','Alat Tulis','Lainnya'],datasets:[{data:[42,28,18,12],backgroundColor:['#3b82f6','#22c55e','#f97316','#a855f7']}]}
   });
 }
 </script>
